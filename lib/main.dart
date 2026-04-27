@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:artesia_aplikasi_art_gallery/pages/home_page.dart';
 import 'package:artesia_aplikasi_art_gallery/pages/explore_page.dart';
+import 'package:artesia_aplikasi_art_gallery/views/auth/login_page.dart';
 
 void main() => runApp(const ArtGalleryApp());
 
@@ -14,9 +15,12 @@ class ArtGalleryApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         scaffoldBackgroundColor: const Color(0xFFF5F5F5),
-        textTheme: GoogleFonts.playfairDisplayTextTheme(Theme.of(context).textTheme),
+        textTheme: GoogleFonts.playfairDisplayTextTheme(
+          Theme.of(context).textTheme,
+        ),
       ),
-      home: const MainNavigation(),
+      home: const LoginPage(),
+      routes: {'/home': (context) => const MainNavigation()},
     );
   }
 }
@@ -31,7 +35,13 @@ class MainNavigation extends StatefulWidget {
 
 class _MainNavigationState extends State<MainNavigation> {
   int _currentIndex = 0;
-  final List<Widget> _pages = [const HomePage(), const ExplorePage(), const Center(child: Text("Inbox"))];
+  final List<Widget> _pages = [
+    const HomePage(),
+    const ExplorePage(),
+    const Center(child: Text("Inbox")),
+    const Center(child: Text("Sell")),
+    const Center(child: Text("Profile")),
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -47,9 +57,18 @@ class _MainNavigationState extends State<MainNavigation> {
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home_filled), label: 'Home'),
           BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),
-          BottomNavigationBarItem(icon: Icon(Icons.mail_outline), label: 'Inbox'),
-          BottomNavigationBarItem(icon: Icon(Icons.sell_outlined), label: 'Sell'),
-          BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: 'Profile'),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.mail_outline),
+            label: 'Inbox',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.sell_outlined),
+            label: 'Sell',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person_outline),
+            label: 'Profile',
+          ),
         ],
       ),
     );

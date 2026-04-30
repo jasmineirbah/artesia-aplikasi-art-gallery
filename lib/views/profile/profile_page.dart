@@ -1,21 +1,63 @@
+// lib/views/profile/profile_page.dart
+
+import 'dart:io';
+import 'package:artesia_aplikasi_art_gallery/utils/hash_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../../services/session_service.dart';
+import '../../services/database_service.dart';
+import '../../controllers/auth_controller.dart';
 import '../../widgets/app_logo.dart';
+import '../../widgets/primary_button.dart';
 import 'nearby_gallery_sheet.dart';
 import '../auth/login_page.dart';
 
-class ProfilePage extends StatelessWidget {
+class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
 
-  void showNearby(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (_) => const NearbyGallerySheet(),
+  @override
+  State<ProfilePage> createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> {
+  final AuthController authController = AuthController();
+
+  String username = "";
+  String? imagePath;
+  int? userId;
+
+  @override
+  void initState() {
+    super.initState();
+    loadUser();
+  }
+
+  void loadUser() async {
+    final user = await SessionService().getUser();
+
+    if (user != null) {
+      final userData =
+          await DatabaseService.instance.getUserByName(user);
+
+      setState(() {
+        username = userData?.fullName ?? "User";
+        imagePath = userData?.profileImage;
+        userId = userData?.id;
+      });
+    }
+  }
+
+  Future<void> pickImage() async {
+    final picked = await ImagePicker().pickImage(
+      source: ImageSource.gallery,
     );
+
+    if (picked != null && userId != null) {
+      setState(() => imagePath = picked.path);
+      await authController.updateProfileImage(userId!, picked.path);
+    }
   }
 
   Future<void> logout(BuildContext context) async {
@@ -28,12 +70,84 @@ class ProfilePage extends StatelessWidget {
     );
   }
 
+  void showNearby(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => const NearbyGallerySheet(),
+    );
+  }
+
+  void showEditUsernameDialog() {
+    TextEditingController controller =
+        TextEditingController(text: username);
+
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text("Edit Username"),
+        content: TextField(controller: controller),
+        actions: [
+          TextButton(
+            onPressed: () async {
+              final newName = controller.text;
+
+              await DatabaseService.instance.updateUsername(
+                userId!,
+                newName,
+              );
+
+              setState(() {
+                username = newName;
+              });
+
+              Navigator.pop(context);
+            },
+            child: const Text("Save"),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void showChangePasswordDialog() {
+    TextEditingController controller = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text("Change Password"),
+        content: TextField(
+          controller: controller,
+          obscureText: true,
+        ),
+        actions: [
+          TextButton(
+            onPressed: () async {
+              final newPass = controller.text;
+
+              final hash = HashHelper.hashPassword(newPass);
+
+              await DatabaseService.instance.updatePassword(
+                userId!,
+                hash,
+              );
+
+              Navigator.pop(context);
+            },
+            child: const Text("Save"),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFFBF9F4),
 
-      /// 🔥 APP BAR (LOGO)
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -47,100 +161,102 @@ class ProfilePage extends StatelessWidget {
           children: [
             const SizedBox(height: 20),
 
-            /// 🔥 PROFILE IMAGE
-            CircleAvatar(
-              radius: 50,
-              backgroundColor: Colors.grey[300],
-              child: const Icon(Icons.person, size: 40),
+            GestureDetector(
+              onTap: pickImage,
+              child: CircleAvatar(
+                radius: 50,
+                backgroundColor: Colors.grey[300],
+                backgroundImage:
+                    imagePath != null ? FileImage(File(imagePath!)) : null,
+                child: imagePath == null
+                    ? const Icon(Icons.camera_alt)
+                    : null,
+              ),
             ),
 
             const SizedBox(height: 16),
 
-            /// 🔥 NAME
             Text(
-              "User Name",
+              username.isEmpty ? "Loading..." : username,
               style: GoogleFonts.inter(
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
               ),
             ),
 
-            const SizedBox(height: 4),
-
-            Text(
-              "Art Enthusiast",
-              style: GoogleFonts.inter(
-                fontSize: 13,
-                color: Colors.grey[600],
-              ),
-            ),
-
             const SizedBox(height: 30),
 
-            /// 🔥 MENU LIST
-            _buildMenuItem("Edit Profile"),
-            _buildMenuItem("My Orders"),
-            _buildMenuItem("My Collections"),
+            _buildEditableItem(
+              "Username",
+              username,
+              () => showEditUsernameDialog(),
+            ),
 
-            /// 🔥 NEARBY (CLICKABLE)
+            _buildEditableItem(
+              "Password",
+              "••••••••",
+              () => showChangePasswordDialog(),
+            ),
+
+            const SizedBox(height: 10),
+
             GestureDetector(
               onTap: () => showNearby(context),
               child: Column(
                 children: [
-                  _buildMenuItem("Nearby Galleries"),
-                  const SizedBox(height: 4),
-                  Container(
-                    width: 40,
-                    height: 2,
-                    color: Colors.grey[400],
+                  Text(
+                    "Nearby Galleries",
+                    style: GoogleFonts.cormorantGaramond(fontSize: 16),
                   ),
+                  const SizedBox(height: 4),
+                  Container(width: 108, height: 2, color: const Color.fromARGB(255, 123, 120, 120)),
                 ],
               ),
             ),
 
-            _buildMenuItem("Settings"),
-
             const SizedBox(height: 30),
 
-            /// 🔥 LOGOUT BUTTON
             SizedBox(
               width: double.infinity,
-              child: ElevatedButton(
+              child: PrimaryButton(
+                text: "LOG OUT",
                 onPressed: () => logout(context),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.black,
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                ),
-                child: const Text(
-                  "Logout",
-                  style: TextStyle(color: Colors.white),
-                ),
               ),
             ),
-
-            const SizedBox(height: 40),
           ],
         ),
       ),
     );
   }
 
-  /// 🔥 MENU ITEM UI
-  Widget _buildMenuItem(String title) {
+  Widget _buildEditableItem(
+    String title,
+    String value,
+    VoidCallback onEdit,
+  ) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 14),
-      child: Row(
+      padding: const EdgeInsets.symmetric(vertical: 12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expanded(
-            child: Text(
-              title,
-              style: GoogleFonts.inter(
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
+          Text(title, style: const TextStyle(color: Colors.grey)),
+
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  value,
+                  style: const TextStyle(fontWeight: FontWeight.w600),
+                ),
               ),
-            ),
+              IconButton(
+                icon: const Icon(Icons.edit, size: 18),
+                onPressed: onEdit,
+              ),
+            ],
           ),
-          const Icon(Icons.arrow_forward_ios, size: 14),
+
+          const Divider(),
         ],
       ),
     );

@@ -273,4 +273,24 @@ class DatabaseService {
       whereArgs: [userId],
     );
   }
+
+  Future<void> updateUsername(int id, String name) async {
+    final db = await database;
+    await db.update(
+      'users',
+      {'fullName': name},
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+  }
+
+  Future<void> updatePassword(int id, String passwordHash) async {
+    final db = await database;
+    await db.update(
+      'users',
+      {'passwordHash': passwordHash},
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+  }
 }

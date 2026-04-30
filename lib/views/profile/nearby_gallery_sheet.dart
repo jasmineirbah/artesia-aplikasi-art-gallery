@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '../../services/location_service.dart';
 import '../../services/gallery_service.dart';
@@ -57,12 +58,32 @@ class _NearbyGallerySheetState extends State<NearbyGallerySheet> {
                   ),
                 ),
 
-                /// TITLE
-                const Text(
-                  "Nearby Galleries",
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
+                Center(
+                  child: Column(
+                    children: [
+                      Text(
+                        "Nearby Galleries",
+                        style: GoogleFonts.cormorantGaramond(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+
+                      const SizedBox(height: 8),
+
+                      /// 🔥 ICON MAP
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.location_on, size: 16),
+                          SizedBox(width: 4),
+                          Text(
+                            "Within 10 km",
+                            style: GoogleFonts.inter(fontSize: 12),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
                 ),
 
@@ -106,16 +127,14 @@ class _NearbyGallerySheetState extends State<NearbyGallerySheet> {
                                 children: [
                                   Text(
                                     g["name"],
-                                    style: const TextStyle(
+                                    overflow: TextOverflow.ellipsis,
+                                    style: GoogleFonts.inter(
                                       fontWeight: FontWeight.w600,
                                     ),
                                   ),
-                                  const SizedBox(height: 4),
                                   Text(
                                     "${distance.toStringAsFixed(1)} km away",
-                                    style: TextStyle(
-                                      color: Colors.grey[600],
-                                    ),
+                                    style: GoogleFonts.inter(color: Colors.grey),
                                   ),
                                 ],
                               ),

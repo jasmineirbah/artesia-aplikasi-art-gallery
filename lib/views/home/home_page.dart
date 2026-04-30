@@ -1,4 +1,5 @@
 import 'package:artesia_aplikasi_art_gallery/views/categories/category_page.dart';
+import 'package:artesia_aplikasi_art_gallery/views/favorites/favorite_page.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:artesia_aplikasi_art_gallery/services/api_service.dart';
@@ -71,7 +72,7 @@ class _HomePageState extends State<HomePage> {
     if (isAlreadyFavorite) {
       await DatabaseService.instance.removeFavorite(userId, artworkId);
     } else {
-      await DatabaseService.instance.addFavorite(userId, artworkId);
+      await DatabaseService.instance.addFavoriteArtwork(userId, art);
     }
 
     if (!mounted) return;
@@ -161,13 +162,55 @@ class _HomePageState extends State<HomePage> {
                       ],
                     ),
 
-                    Container(
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(20),
+                    GestureDetector(
+                      onTap: () async {
+                        await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => FavoritePage(userId: userId),
+                          ),
+                        );
+
+                        if (mounted) {
+                          loadFavorites();
+                        }
+                      },
+                      child: Stack(
+                        clipBehavior: Clip.none,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: const Icon(Icons.favorite_border),
+                          ),
+                          if (favoriteIds.isNotEmpty)
+                            Positioned(
+                              top: -4,
+                              right: -4,
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 6,
+                                  vertical: 2,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Colors.red,
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                child: Text(
+                                  favoriteIds.length.toString(),
+                                  style: GoogleFonts.inter(
+                                    color: Colors.white,
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ),
+                        ],
                       ),
-                      child: const Icon(Icons.favorite_border),
                     ),
                   ],
                 ),

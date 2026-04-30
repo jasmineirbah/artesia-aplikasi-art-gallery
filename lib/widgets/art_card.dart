@@ -33,16 +33,12 @@ class ArtCard extends StatelessWidget {
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(
-            builder: (_) => DetailPage(art: art),
-          ),
+          MaterialPageRoute(builder: (_) => DetailPage(art: art)),
         );
       },
       child: Container(
         width: 240,
-        margin: isSmall
-            ? EdgeInsets.zero
-            : const EdgeInsets.only(right: 20),
+        margin: isSmall ? EdgeInsets.zero : const EdgeInsets.only(right: 20),
         color: Colors.transparent,
 
         child: Column(
@@ -65,10 +61,23 @@ class ArtCard extends StatelessWidget {
                       ),
                     ],
                   ),
-                  child: Image.network(
-                    image,
-                    fit: BoxFit.contain,
-                  ),
+                  child: image.isEmpty
+                      ? Icon(
+                          Icons.image_not_supported_outlined,
+                          color: Colors.grey[400],
+                          size: 42,
+                        )
+                      : Image.network(
+                          image,
+                          fit: BoxFit.contain,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Icon(
+                              Icons.image_not_supported_outlined,
+                              color: Colors.grey[400],
+                              size: 42,
+                            );
+                          },
+                        ),
                 ),
 
                 /// ❤️ LOVE BUTTON

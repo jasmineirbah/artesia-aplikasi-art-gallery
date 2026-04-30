@@ -116,9 +116,7 @@ class _DetailPageState extends State<DetailPage> {
               /// LOCATION
               Text(
                 widget.art['location'],
-                style: GoogleFonts.inter(
-                  fontWeight: FontWeight.w600,
-                ),
+                style: GoogleFonts.inter(fontWeight: FontWeight.w600),
               ),
 
               const SizedBox(height: 6),
@@ -208,10 +206,7 @@ class _DetailPageState extends State<DetailPage> {
 
               const SizedBox(height: 6),
 
-              Text(
-                art['title'],
-                style: GoogleFonts.inter(fontSize: 14),
-              ),
+              Text(art['title'], style: GoogleFonts.inter(fontSize: 14)),
 
               const SizedBox(height: 20),
 
@@ -227,7 +222,7 @@ class _DetailPageState extends State<DetailPage> {
                     BoxShadow(
                       color: Colors.black.withOpacity(0.05),
                       blurRadius: 10,
-                    )
+                    ),
                   ],
                 ),
                 child: ClipRect(
@@ -236,10 +231,23 @@ class _DetailPageState extends State<DetailPage> {
                       sensorController.offsetX,
                       sensorController.offsetY,
                     ),
-                    child: Image.network(
-                      art['image'],
-                      fit: BoxFit.contain,
-                    ),
+                    child: (art['image']?.toString() ?? '').isEmpty
+                        ? Icon(
+                            Icons.image_not_supported_outlined,
+                            color: Colors.grey[400],
+                            size: 54,
+                          )
+                        : Image.network(
+                            art['image'],
+                            fit: BoxFit.contain,
+                            errorBuilder: (context, error, stackTrace) {
+                              return Icon(
+                                Icons.image_not_supported_outlined,
+                                color: Colors.grey[400],
+                                size: 54,
+                              );
+                            },
+                          ),
                   ),
                 ),
               ),
@@ -247,19 +255,13 @@ class _DetailPageState extends State<DetailPage> {
               const SizedBox(height: 20),
 
               /// 📄 INFO
-              Text(
-                art['medium'],
-                style: GoogleFonts.inter(fontSize: 13),
-              ),
+              Text(art['medium'], style: GoogleFonts.inter(fontSize: 13)),
 
               const SizedBox(height: 6),
 
               Text(
                 art['dimensions'],
-                style: GoogleFonts.inter(
-                  fontSize: 12,
-                  color: Colors.grey,
-                ),
+                style: GoogleFonts.inter(fontSize: 12, color: Colors.grey),
               ),
 
               const SizedBox(height: 20),
@@ -278,10 +280,7 @@ class _DetailPageState extends State<DetailPage> {
               /// 💱 CONVERTED
               Text(
                 "≈ Rp ${convertedPrice.toStringAsFixed(0)}",
-                style: GoogleFonts.inter(
-                  fontSize: 14,
-                  color: Colors.grey,
-                ),
+                style: GoogleFonts.inter(fontSize: 14, color: Colors.grey),
               ),
 
               const SizedBox(height: 30),

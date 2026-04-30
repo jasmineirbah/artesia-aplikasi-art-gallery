@@ -43,7 +43,7 @@ class _CategoryPageState extends State<CategoryPage> {
     if (isAlreadyFavorite) {
       await DatabaseService.instance.removeFavorite(widget.userId, artworkId);
     } else {
-      await DatabaseService.instance.addFavorite(widget.userId, artworkId);
+      await DatabaseService.instance.addFavoriteArtwork(widget.userId, art);
     }
 
     if (!mounted) return;

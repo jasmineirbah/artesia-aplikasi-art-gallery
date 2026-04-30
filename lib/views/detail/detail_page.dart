@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
+import '../../controllers/sensor_controller.dart';
 
 class DetailPage extends StatefulWidget {
   final Map<String, dynamic> art;
@@ -15,12 +16,24 @@ class DetailPage extends StatefulWidget {
 class _DetailPageState extends State<DetailPage> {
   double convertedPrice = 0;
   String jakartaTime = "--:--";
+  final SensorController sensorController = SensorController();
 
   @override
   void initState() {
     super.initState();
+
     convertCurrency();
     getTime();
+
+    sensorController.start(() {
+      setState(() {});
+    });
+  }
+
+  @override
+  void dispose() {
+    sensorController.dispose();
+    super.dispose();
   }
 
   /// 💱 CURRENCY API
@@ -217,9 +230,17 @@ class _DetailPageState extends State<DetailPage> {
                     )
                   ],
                 ),
-                child: Image.network(
-                  art['image'],
-                  fit: BoxFit.contain,
+                child: ClipRect(
+                  child: Transform.translate(
+                    offset: Offset(
+                      sensorController.offsetX,
+                      sensorController.offsetY,
+                    ),
+                    child: Image.network(
+                      art['image'],
+                      fit: BoxFit.contain,
+                    ),
+                  ),
                 ),
               ),
 

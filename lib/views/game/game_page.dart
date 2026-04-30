@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:artesia_aplikasi_art_gallery/services/game_service.dart';
+import '../../controllers/shake_controller.dart';
 
 class GamePage extends StatefulWidget {
   const GamePage({super.key});
@@ -14,13 +15,33 @@ class _GamePageState extends State<GamePage> {
   int currentIndex = 0;
   int score = 0;
   bool isLoading = true;
+  final ShakeController shakeController = ShakeController();
 
   String? selectedAnswer;
 
   @override
   void initState() {
     super.initState();
+
     loadGame();
+
+    shakeController.start(() {
+      print("SHAKE DETECTED"); // 🔥 TAMBAH INI
+      skipQuestion();
+    });
+  }
+
+  @override
+  void dispose() {
+    shakeController.dispose();
+    super.dispose();
+  }
+
+ void skipQuestion() {
+    setState(() {
+      currentIndex = (currentIndex + 1) % questions.length;
+      selectedAnswer = null;
+    });
   }
 
   Future<void> loadGame() async {

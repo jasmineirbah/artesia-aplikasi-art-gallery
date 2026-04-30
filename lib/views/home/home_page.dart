@@ -1,9 +1,11 @@
 import 'package:artesia_aplikasi_art_gallery/views/categories/category_page.dart';
+import 'package:artesia_aplikasi_art_gallery/views/favorites/favorite_page.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:artesia_aplikasi_art_gallery/services/api_service.dart';
 import 'package:artesia_aplikasi_art_gallery/widgets/art_card.dart';
 import 'package:artesia_aplikasi_art_gallery/services/database_service.dart';
+import 'package:artesia_aplikasi_art_gallery/services/notification_service.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -19,7 +21,7 @@ class _HomePageState extends State<HomePage> {
   List<String> categories = [];
   bool isLoading = true;
   Set<int> favoriteIds = {}; // 🔥 simpan id artwork
-  late int userId; // 
+  late int userId; //
 
   final List<String> validCategories = [
     "Paintings",
@@ -52,12 +54,42 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> loadFavorites() async {
-    final data =
-        await DatabaseService.instance.getUserFavorites(userId);
+    final data = await DatabaseService.instance.getUserFavorites(userId);
+
+    if (!mounted) return;
 
     setState(() {
       favoriteIds = data.toSet();
     });
+  }
+
+  Future<void> toggleFavorite(Map<String, dynamic> art) async {
+    final artworkId = art['id'];
+    if (artworkId is! int) return;
+
+    final isAlreadyFavorite = favoriteIds.contains(artworkId);
+
+    if (isAlreadyFavorite) {
+      await DatabaseService.instance.removeFavorite(userId, artworkId);
+    } else {
+      await DatabaseService.instance.addFavoriteArtwork(userId, art);
+    }
+
+    if (!mounted) return;
+
+    setState(() {
+      if (isAlreadyFavorite) {
+        favoriteIds.remove(artworkId);
+      } else {
+        favoriteIds.add(artworkId);
+      }
+    });
+
+    NotificationService.showFavoriteNotification(
+      context,
+      isFavorite: !isAlreadyFavorite,
+      artworkTitle: art['title']?.toString() ?? 'Artwork',
+    );
   }
 
   void extractCategories() {
@@ -72,9 +104,11 @@ class _HomePageState extends State<HomePage> {
     }
 
     categories = set.toList();
+
     /// 🔥 SORT BIAR URUT
     categories.sort(
-      (a, b) => validCategories.indexOf(a).compareTo(validCategories.indexOf(b)),
+      (a, b) =>
+          validCategories.indexOf(a).compareTo(validCategories.indexOf(b)),
     );
 
     /// 🔥 kalau kurang dari 4, tambahin manual
@@ -94,13 +128,13 @@ class _HomePageState extends State<HomePage> {
       backgroundColor: const Color(0xFFFBF9F4),
 
       body: SafeArea(
-        child: SingleChildScrollView( // 🔥 INI KUNCI
+        child: SingleChildScrollView(
+          // 🔥 INI KUNCI
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-
                 const SizedBox(height: 30),
 
                 /// 🔹 HEADER
@@ -128,14 +162,56 @@ class _HomePageState extends State<HomePage> {
                       ],
                     ),
 
-                    Container(
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(20),
+                    GestureDetector(
+                      onTap: () async {
+                        await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => FavoritePage(userId: userId),
+                          ),
+                        );
+
+                        if (mounted) {
+                          loadFavorites();
+                        }
+                      },
+                      child: Stack(
+                        clipBehavior: Clip.none,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: const Icon(Icons.favorite_border),
+                          ),
+                          if (favoriteIds.isNotEmpty)
+                            Positioned(
+                              top: -4,
+                              right: -4,
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 6,
+                                  vertical: 2,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Colors.red,
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                child: Text(
+                                  favoriteIds.length.toString(),
+                                  style: GoogleFonts.inter(
+                                    color: Colors.white,
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ),
+                        ],
                       ),
-                      child: const Icon(Icons.favorite_border),
-                    )
+                    ),
                   ],
                 ),
 
@@ -181,7 +257,7 @@ class _HomePageState extends State<HomePage> {
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: const Icon(Icons.notifications_none),
-                    )
+                    ),
                   ],
                 ),
 
@@ -216,21 +292,11 @@ class _HomePageState extends State<HomePage> {
                               image: art['image'],
                               medium: art['medium'],
 
-                              isFavorite: favoriteIds.contains(art['id']), // 🔥 ini
+                              isFavorite: favoriteIds.contains(
+                                art['id'],
+                              ), // 🔥 ini
 
-                              onFavoriteToggle: () async {
-                                if (favoriteIds.contains(art['id'])) {
-                                  await DatabaseService.instance
-                                      .removeFavorite(userId, art['id']);
-                                  favoriteIds.remove(art['id']);
-                                } else {
-                                  await DatabaseService.instance
-                                      .addFavorite(userId, art['id']);
-                                  favoriteIds.add(art['id']);
-                                }
-
-                                setState(() {});
-                              },
+                              onFavoriteToggle: () => toggleFavorite(art),
                             );
                           },
                         ),
@@ -262,15 +328,21 @@ class _HomePageState extends State<HomePage> {
                     final category = categories[index];
 
                     return GestureDetector(
-                      onTap: () {
-                        Navigator.push(
+                      onTap: () async {
+                        await Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (_) =>
-                                CategoryPage(category: category),
+                            builder: (_) => CategoryPage(
+                              category: category,
+                              userId: userId,
+                            ),
                             settings: RouteSettings(arguments: artworks),
                           ),
                         );
+
+                        if (mounted) {
+                          loadFavorites();
+                        }
                       },
                       child: Container(
                         color: Colors.grey[300],
@@ -315,8 +387,8 @@ class _HomePageState extends State<HomePage> {
                         medium: art['medium'],
                         isSmall: true,
 
-                        isFavorite: false, // optional
-                        onFavoriteToggle: () {}, // 🔥 wajib isi walaupun kosong
+                        isFavorite: favoriteIds.contains(art['id']),
+                        onFavoriteToggle: () => toggleFavorite(art),
                       );
                     },
                   ),

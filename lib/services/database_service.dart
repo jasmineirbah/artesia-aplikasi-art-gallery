@@ -8,7 +8,7 @@ class DatabaseService {
   static final DatabaseService instance = DatabaseService._();
 
   static const _databaseName = 'artesia_gallery.db';
-  static const _databaseVersion = 2;
+  static const _databaseVersion = 3;
   static const usersTable = 'users';
 
   Database? _database;
@@ -48,6 +48,16 @@ class DatabaseService {
     await db.execute(
       'CREATE INDEX idx_users_full_name ON $usersTable(full_name)',
     );
+
+    await db.execute('''
+      CREATE TABLE favorites (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER NOT NULL,
+        artwork_id INTEGER NOT NULL,
+        created_at TEXT NOT NULL,
+        UNIQUE(user_id, artwork_id)
+      )
+    ''');
   }
 
   Future<void> _upgradeDatabase(
@@ -75,6 +85,18 @@ class DatabaseService {
         FROM users_old
       ''');
       await db.execute('DROP TABLE users_old');
+    }
+
+    if (oldVersion < 3) {
+      await db.execute('''
+        CREATE TABLE favorites (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          user_id INTEGER NOT NULL,
+          artwork_id INTEGER NOT NULL,
+          created_at TEXT NOT NULL,
+          UNIQUE(user_id, artwork_id)
+        )
+      ''');
     }
   }
 
@@ -113,5 +135,41 @@ class DatabaseService {
       where: 'id = ?',
       whereArgs: [userId],
     );
+  }
+
+  Future<void> addFavorite(int userId, int artworkId) async {
+    final db = await database;
+
+    await db.insert(
+      'favorites',
+      {
+        'user_id': userId,
+        'artwork_id': artworkId,
+        'created_at': DateTime.now().toIso8601String(),
+      },
+      conflictAlgorithm: ConflictAlgorithm.ignore,
+    );
+  }
+
+  Future<void> removeFavorite(int userId, int artworkId) async {
+    final db = await database;
+
+    await db.delete(
+      'favorites',
+      where: 'user_id = ? AND artwork_id = ?',
+      whereArgs: [userId, artworkId],
+    );
+  }
+
+  Future<List<int>> getUserFavorites(int userId) async {
+    final db = await database;
+
+    final result = await db.query(
+      'favorites',
+      where: 'user_id = ?',
+      whereArgs: [userId],
+    );
+
+    return result.map((e) => e['artwork_id'] as int).toList();
   }
 }

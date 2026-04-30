@@ -70,7 +70,8 @@ class AuthController {
 
       final id = await _databaseService.createUser(user);
       return AuthResult.success('Akun berhasil dibuat.', user.copyWith(id: id));
-    } catch (_) {
+    } 
+      catch (_) {
       return const AuthResult.failure(
         'Database SQLite belum siap di platform ini.',
       );

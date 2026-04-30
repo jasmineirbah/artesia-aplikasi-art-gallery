@@ -1,76 +1,32 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:artesia_aplikasi_art_gallery/pages/home_page.dart';
-import 'package:artesia_aplikasi_art_gallery/pages/explore_page.dart';
 import 'package:artesia_aplikasi_art_gallery/views/auth/login_page.dart';
+import 'package:artesia_aplikasi_art_gallery/views/main/main_page.dart';
+import 'package:artesia_aplikasi_art_gallery/theme/app_theme.dart';
 
-void main() => runApp(const ArtGalleryApp());
+void main() {
+  runApp(const MyApp());
+}
 
-class ArtGalleryApp extends StatelessWidget {
-  const ArtGalleryApp({super.key});
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      title: 'Artesia',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        scaffoldBackgroundColor: const Color(0xFFF5F5F5),
-        textTheme: GoogleFonts.playfairDisplayTextTheme(
-          Theme.of(context).textTheme,
-        ),
-      ),
-      home: const LoginPage(),
-      routes: {'/home': (context) => const MainNavigation()},
-    );
-  }
-}
 
-// Navigasi Bottom Bar
-class MainNavigation extends StatefulWidget {
-  const MainNavigation({super.key});
+      // 🔥 THEME
+      theme: AppTheme.lightTheme,
 
-  @override
-  State<MainNavigation> createState() => _MainNavigationState();
-}
+      // 🔥 HALAMAN AWAL
+      initialRoute: '/login',
 
-class _MainNavigationState extends State<MainNavigation> {
-  int _currentIndex = 0;
-  final List<Widget> _pages = [
-    const HomePage(),
-    const ExplorePage(),
-    const Center(child: Text("Inbox")),
-    const Center(child: Text("Sell")),
-    const Center(child: Text("Profile")),
-  ];
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: _pages[_currentIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        onTap: (index) => setState(() => _currentIndex = index),
-        type: BottomNavigationBarType.fixed,
-        selectedItemColor: Colors.black,
-        unselectedItemColor: Colors.grey,
-        showSelectedLabels: true,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home_filled), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.mail_outline),
-            label: 'Inbox',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.sell_outlined),
-            label: 'Sell',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person_outline),
-            label: 'Profile',
-          ),
-        ],
-      ),
+      // 🔥 ROUTES (INI YANG KAMU TANYAIN)
+      routes: {
+        '/login': (context) => const LoginPage(),
+        '/home': (context) => const MainPage(),
+      },
     );
   }
 }

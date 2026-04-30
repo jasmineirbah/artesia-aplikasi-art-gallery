@@ -1,5 +1,9 @@
 import 'package:artesia_aplikasi_art_gallery/controllers/auth_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:artesia_aplikasi_art_gallery/widgets/input_field.dart';
+import 'package:artesia_aplikasi_art_gallery/widgets/gallery_accent.dart';
+import 'package:artesia_aplikasi_art_gallery/widgets/app_logo.dart';
+import 'package:artesia_aplikasi_art_gallery/widgets/primary_button.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -75,52 +79,54 @@ class _RegisterPageState extends State<RegisterPage> {
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
                             const SizedBox(height: 12),
-                            const _RegisterHeader(),
+                            const AppLogo(showBackButton: true),
                             const SizedBox(height: 58),
-                            const _RegisterHero(),
+                            const Center(child: GalleryAccent()),
                             const SizedBox(height: 28),
                             Text(
                               'Create Account',
                               textAlign: TextAlign.center,
-                              style: GoogleFonts.playfairDisplay(
+                              style: GoogleFonts.cormorantGaramond(
                                 fontSize: 28,
                                 fontStyle: FontStyle.italic,
+                                fontWeight: FontWeight.bold,
                                 color: Colors.black,
                               ),
                             ),
                             const SizedBox(height: 12),
                             Text(
-                              'Join our curated community of art lovers.',
+                              'Join our curated community of art lovers',
                               textAlign: TextAlign.center,
                               style: GoogleFonts.inter(
                                 fontSize: 12,
                                 color: const Color(0xFF6F6A64),
                               ),
                             ),
-                            const SizedBox(height: 34),
-                            _RegisterInput(
+                            const SizedBox(height: 38),
+                            InputField(
                               controller: _fullNameController,
-                              label: 'NAME',
-                              hintText: 'your name',
+                              label: 'USERNAME',
+                              hintText: 'write your name',
                               textInputAction: TextInputAction.next,
                               validator: _authController.validateFullName,
                             ),
-                            const SizedBox(height: 20),
-                            _RegisterInput(
+                            const SizedBox(height: 24),
+                            InputField(
                               controller: _passwordController,
                               label: 'PASSWORD',
-                              hintText: '********',
+                              hintText: '•••••••',
                               obscureText: _obscurePassword,
                               textInputAction: TextInputAction.next,
                               validator: _authController.validatePassword,
                               suffixIcon: IconButton(
+                                padding: EdgeInsets.zero,
+                                constraints: const BoxConstraints(),
                                 icon: Icon(
                                   _obscurePassword
                                       ? Icons.visibility_off_outlined
                                       : Icons.visibility_outlined,
-                                  size: 18,
+                                  size: 16,
                                 ),
-                                color: const Color(0xFF9A948D),
                                 onPressed: () {
                                   setState(() {
                                     _obscurePassword = !_obscurePassword;
@@ -128,11 +134,11 @@ class _RegisterPageState extends State<RegisterPage> {
                                 },
                               ),
                             ),
-                            const SizedBox(height: 20),
-                            _RegisterInput(
+                            const SizedBox(height: 24),
+                            InputField(
                               controller: _confirmPasswordController,
                               label: 'CONFIRM PASSWORD',
-                              hintText: '********',
+                              hintText: '•••••••',
                               obscureText: _obscureConfirmPassword,
                               textInputAction: TextInputAction.done,
                               onFieldSubmitted: (_) => _submitRegister(),
@@ -143,50 +149,26 @@ class _RegisterPageState extends State<RegisterPage> {
                                 );
                               },
                               suffixIcon: IconButton(
+                                padding: EdgeInsets.zero,
+                                constraints: const BoxConstraints(),
                                 icon: Icon(
                                   _obscureConfirmPassword
                                       ? Icons.visibility_off_outlined
                                       : Icons.visibility_outlined,
-                                  size: 18,
+                                  size: 16,
                                 ),
-                                color: const Color(0xFF9A948D),
                                 onPressed: () {
                                   setState(() {
-                                    _obscureConfirmPassword =
-                                        !_obscureConfirmPassword;
+                                    _obscureConfirmPassword = !_obscureConfirmPassword;
                                   });
                                 },
                               ),
                             ),
-                            const SizedBox(height: 34),
-                            SizedBox(
-                              height: 48,
-                              child: ElevatedButton(
-                                onPressed: _isLoading ? null : _submitRegister,
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.black,
-                                  disabledBackgroundColor: Colors.black54,
-                                  foregroundColor: Colors.white,
-                                  elevation: 0,
-                                  shape: const RoundedRectangleBorder(),
-                                ),
-                                child: _isLoading
-                                    ? const SizedBox(
-                                        width: 18,
-                                        height: 18,
-                                        child: CircularProgressIndicator(
-                                          strokeWidth: 2,
-                                          color: Colors.white,
-                                        ),
-                                      )
-                                    : Text(
-                                        'SIGN UP',
-                                        style: GoogleFonts.inter(
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w700,
-                                        ),
-                                      ),
-                              ),
+                            const SizedBox(height: 38),
+                            PrimaryButton(
+                              text: 'SIGN UP',
+                              isLoading: _isLoading,
+                              onPressed: _submitRegister,
                             ),
                             const SizedBox(height: 30),
                             Wrap(
@@ -224,7 +206,6 @@ class _RegisterPageState extends State<RegisterPage> {
                               ],
                             ),
                             const Spacer(),
-                            const _FooterCities(),
                             const SizedBox(height: 24),
                           ],
                         ),
@@ -241,157 +222,3 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 }
 
-class _RegisterHeader extends StatelessWidget {
-  const _RegisterHeader();
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: 38,
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          Align(
-            alignment: Alignment.centerLeft,
-            child: IconButton(
-              onPressed: () => Navigator.of(context).pop(false),
-              icon: const Icon(Icons.arrow_back, size: 18),
-              color: Colors.black,
-              padding: EdgeInsets.zero,
-              constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
-            ),
-          ),
-          Text(
-            'G A L L E R Y',
-            style: GoogleFonts.inter(
-              fontSize: 10,
-              fontWeight: FontWeight.w600,
-              color: Colors.black,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _RegisterHero extends StatelessWidget {
-  const _RegisterHero();
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Container(
-        width: 190,
-        height: 150,
-        decoration: const BoxDecoration(
-          color: Color(0xFFEFE8DA),
-          image: DecorationImage(
-            image: NetworkImage('https://picsum.photos/380/300?blur=1'),
-            fit: BoxFit.cover,
-            opacity: 0.58,
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _RegisterInput extends StatelessWidget {
-  const _RegisterInput({
-    required this.controller,
-    required this.label,
-    required this.hintText,
-    this.textInputAction,
-    this.obscureText = false,
-    this.validator,
-    this.onFieldSubmitted,
-    this.suffixIcon,
-  });
-
-  final TextEditingController controller;
-  final String label;
-  final String hintText;
-  final TextInputAction? textInputAction;
-  final bool obscureText;
-  final String? Function(String?)? validator;
-  final ValueChanged<String>? onFieldSubmitted;
-  final Widget? suffixIcon;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: GoogleFonts.inter(
-            fontSize: 10,
-            fontWeight: FontWeight.w700,
-            color: const Color(0xFF76706B),
-          ),
-        ),
-        TextFormField(
-          controller: controller,
-          textInputAction: textInputAction,
-          obscureText: obscureText,
-          validator: validator,
-          onFieldSubmitted: onFieldSubmitted,
-          style: GoogleFonts.inter(fontSize: 13, color: Colors.black),
-          decoration: InputDecoration(
-            hintText: hintText,
-            hintStyle: GoogleFonts.inter(
-              fontSize: 13,
-              color: const Color(0xFF928C86),
-            ),
-            suffixIcon: suffixIcon,
-            suffixIconConstraints: const BoxConstraints(
-              minWidth: 32,
-              minHeight: 32,
-            ),
-            isDense: true,
-            contentPadding: const EdgeInsets.only(top: 8, bottom: 8),
-            enabledBorder: const UnderlineInputBorder(
-              borderSide: BorderSide(color: Color(0xFF8C867F)),
-            ),
-            focusedBorder: const UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.black, width: 1.4),
-            ),
-            errorBorder: const UnderlineInputBorder(
-              borderSide: BorderSide(color: Color(0xFFB45A4B)),
-            ),
-            focusedErrorBorder: const UnderlineInputBorder(
-              borderSide: BorderSide(color: Color(0xFFB45A4B), width: 1.4),
-            ),
-            errorStyle: GoogleFonts.inter(
-              fontSize: 10,
-              color: const Color(0xFFB45A4B),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _FooterCities extends StatelessWidget {
-  const _FooterCities();
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Container(width: 1, height: 26, color: const Color(0xFFCFC8BE)),
-        const SizedBox(height: 10),
-        Text(
-          'PARIS  -  NEW YORK  -  LONDON',
-          style: GoogleFonts.inter(
-            fontSize: 8,
-            fontWeight: FontWeight.w500,
-            color: const Color(0xFFB6AEA4),
-          ),
-        ),
-      ],
-    );
-  }
-}

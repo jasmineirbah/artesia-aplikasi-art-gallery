@@ -1,81 +1,330 @@
+import 'package:artesia_aplikasi_art_gallery/views/categories/category_page.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:artesia_aplikasi_art_gallery/pages/detail_page.dart'; 
+import 'package:artesia_aplikasi_art_gallery/services/api_service.dart';
+import 'package:artesia_aplikasi_art_gallery/widgets/art_card.dart';
+import 'package:artesia_aplikasi_art_gallery/services/database_service.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  final ApiService _apiService = ApiService();
+
+  List<Map<String, dynamic>> artworks = [];
+  List<String> categories = [];
+  bool isLoading = true;
+  Set<int> favoriteIds = {}; // 🔥 simpan id artwork
+  late int userId; // 
+
+  final List<String> validCategories = [
+    "Paintings",
+    "Drawings",
+    "Prints",
+    "Sculpture",
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+
+    userId = 1; // 🔥 sementara (nanti bisa dari login)
+    fetchData();
+    loadFavorites();
+  }
+
+  Future<void> fetchData() async {
+    try {
+      final data = await _apiService.fetchArtworks();
+
+      setState(() {
+        artworks = data;
+        extractCategories();
+        isLoading = false;
+      });
+    } catch (e) {
+      setState(() => isLoading = false);
+    }
+  }
+
+  Future<void> loadFavorites() async {
+    final data =
+        await DatabaseService.instance.getUserFavorites(userId);
+
+    setState(() {
+      favoriteIds = data.toSet();
+    });
+  }
+
+  void extractCategories() {
+    final set = <String>{};
+
+    for (var art in artworks) {
+      final category = art['category']?.toString();
+
+      if (category != null && validCategories.contains(category)) {
+        set.add(category);
+      }
+    }
+
+    categories = set.toList();
+    /// 🔥 SORT BIAR URUT
+    categories.sort(
+      (a, b) => validCategories.indexOf(a).compareTo(validCategories.indexOf(b)),
+    );
+
+    /// 🔥 kalau kurang dari 4, tambahin manual
+    while (categories.length < 4) {
+      for (var cat in validCategories) {
+        if (!categories.contains(cat)) {
+          categories.add(cat);
+        }
+        if (categories.length == 4) break;
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text("Welcome to", style: GoogleFonts.inter(fontSize: 14, color: Colors.grey)),
-            const Text("Arts Gallery", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 28)),
-          ],
-        ),
-        actions: [
-          const CircleAvatar(backgroundImage: NetworkImage('https://i.pravatar.cc/150'), radius: 18),
-          const SizedBox(width: 16),
-        ],
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Search Bar
-            TextField(
-              decoration: InputDecoration(
-                hintText: "Search Gallery",
-                prefixIcon: const Icon(Icons.search),
-                filled: true,
-                fillColor: Colors.white,
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
-              ),
-            ),
-            const SizedBox(height: 24),
-            const Text("For You", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 16),
-            SizedBox(
-              height: 380,
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                children: [
-                  _artCard(context, "Omar Mahfoudi", "Morning Bird 5, 2024", "Ink on paper", "\$1,500", "https://picsum.photos/300/400"),
-                  _artCard(context, "Salvo", "La cattedrale, 2004", "Oil on paper", "\$32,400", "https://picsum.photos/301/400"),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+      backgroundColor: const Color(0xFFFBF9F4),
 
-  Widget _artCard(BuildContext context, String artist, String title, String type, String price, String img) {
-    return GestureDetector(
-      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const DetailPage())),
-      child: Container(
-        width: 200,
-        margin: const EdgeInsets.only(right: 16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: Image.network(img, height: 250, fit: BoxFit.cover),
+      body: SafeArea(
+        child: SingleChildScrollView( // 🔥 INI KUNCI
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+
+                const SizedBox(height: 30),
+
+                /// 🔹 HEADER
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Welcome to",
+                          style: GoogleFonts.inter(
+                            fontSize: 14,
+                            color: Colors.grey,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text(
+                          "Arts Gallery",
+                          style: GoogleFonts.cormorantGaramond(
+                            fontSize: 30,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: const Icon(Icons.favorite_border),
+                    )
+                  ],
+                ),
+
+                const SizedBox(height: 20),
+
+                /// 🔍 SEARCH
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        style: GoogleFonts.inter(
+                          fontSize: 13, // 🔥 isi text
+                          color: Colors.black,
+                        ),
+                        decoration: InputDecoration(
+                          hintText: "Search Painting",
+                          hintStyle: GoogleFonts.inter(
+                            fontSize: 13, // 🔥 samain dengan input login
+                            color: Colors.grey,
+                          ),
+                          prefixIcon: const Icon(Icons.search, size: 18),
+                          filled: true,
+                          fillColor: Colors.white,
+
+                          contentPadding: const EdgeInsets.symmetric(
+                            vertical: 14, // 🔥 biar ga gepeng
+                          ),
+
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(20),
+                            borderSide: BorderSide.none,
+                          ),
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(width: 10),
+
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: const Icon(Icons.notifications_none),
+                    )
+                  ],
+                ),
+
+                const SizedBox(height: 24),
+
+                /// 🔥 FOR YOU
+                Text(
+                  "For You",
+                  style: GoogleFonts.cormorantGaramond(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+
+                const SizedBox(height: 16),
+
+                SizedBox(
+                  height: 380, // 🔥 WAJIB biar ga overflow
+                  child: isLoading
+                      ? const Center(child: CircularProgressIndicator())
+                      : ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: artworks.length,
+                          itemBuilder: (context, index) {
+                            final art = artworks[index];
+
+                            return ArtCard(
+                              art: art,
+                              artist: art['artist'],
+                              title: art['title'],
+                              price: art['price'],
+                              image: art['image'],
+                              medium: art['medium'],
+
+                              isFavorite: favoriteIds.contains(art['id']), // 🔥 ini
+
+                              onFavoriteToggle: () async {
+                                if (favoriteIds.contains(art['id'])) {
+                                  await DatabaseService.instance
+                                      .removeFavorite(userId, art['id']);
+                                  favoriteIds.remove(art['id']);
+                                } else {
+                                  await DatabaseService.instance
+                                      .addFavorite(userId, art['id']);
+                                  favoriteIds.add(art['id']);
+                                }
+
+                                setState(() {});
+                              },
+                            );
+                          },
+                        ),
+                ),
+
+                const SizedBox(height: 24),
+
+                /// 🔥 CATEGORIES
+                Text(
+                  "Categories",
+                  style: GoogleFonts.cormorantGaramond(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+
+                const SizedBox(height: 16),
+
+                GridView.builder(
+                  shrinkWrap: true, // 🔥 penting
+                  physics: const NeverScrollableScrollPhysics(), // 🔥 penting
+                  itemCount: categories.length,
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 12,
+                    mainAxisSpacing: 12,
+                  ),
+                  itemBuilder: (context, index) {
+                    final category = categories[index];
+
+                    return GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) =>
+                                CategoryPage(category: category),
+                            settings: RouteSettings(arguments: artworks),
+                          ),
+                        );
+                      },
+                      child: Container(
+                        color: Colors.grey[300],
+                        child: Center(
+                          child: Text(
+                            category,
+                            style: GoogleFonts.inter(
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+                const SizedBox(height: 46),
+
+                Text(
+                  "Culture",
+                  style: GoogleFonts.cormorantGaramond(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+
+                const SizedBox(height: 16),
+
+                SizedBox(
+                  height: 380,
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: artworks.length,
+                    itemBuilder: (context, index) {
+                      final art = artworks[index];
+
+                      return ArtCard(
+                        art: art,
+                        artist: art['artist'],
+                        title: art['title'],
+                        price: art['price'],
+                        image: art['image'],
+                        medium: art['medium'],
+                        isSmall: true,
+
+                        isFavorite: false, // optional
+                        onFavoriteToggle: () {}, // 🔥 wajib isi walaupun kosong
+                      );
+                    },
+                  ),
+                ),
+                const SizedBox(height: 30),
+              ],
             ),
-            const SizedBox(height: 8),
-            Text(artist, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-            Text(title, style: GoogleFonts.inter(fontSize: 12, color: Colors.grey)),
-            const Spacer(),
-            Text(price, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-          ],
+          ),
         ),
       ),
     );

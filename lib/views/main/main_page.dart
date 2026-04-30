@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:artesia_aplikasi_art_gallery/views/home/home_page.dart';
 import 'package:artesia_aplikasi_art_gallery/views/game/game_page.dart';
+import 'package:artesia_aplikasi_art_gallery/views/profile/profile_page.dart';
 import 'package:artesia_aplikasi_art_gallery/widgets/bottom_navbar.dart';
 
 class MainPage extends StatefulWidget {
@@ -17,7 +18,7 @@ class _MainPageState extends State<MainPage> {
     const HomePage(),
     const GamePage(),
     const Center(child: Text("Inbox Page")),
-    const Center(child: Text("Profile Page")),
+    const ProfilePage(),
   ];
 
   @override

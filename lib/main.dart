@@ -16,13 +16,13 @@ class MyApp extends StatelessWidget {
       title: 'Artesia',
       debugShowCheckedModeBanner: false,
 
-      // 🔥 THEME
+      // THEME
       theme: AppTheme.lightTheme,
 
-      // 🔥 HALAMAN AWAL
+      // HALAMAN AWAL
       initialRoute: '/login',
 
-      // 🔥 ROUTES (INI YANG KAMU TANYAIN)
+      // 
       routes: {
         '/login': (context) => const LoginPage(),
         '/home': (context) => const MainPage(),

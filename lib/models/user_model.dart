@@ -5,6 +5,7 @@ class UserModel {
     required this.passwordHash,
     required this.createdAt,
     this.lastLoginAt,
+    this.profileImage,
   });
 
   final int? id;
@@ -12,6 +13,7 @@ class UserModel {
   final String passwordHash;
   final DateTime createdAt;
   final DateTime? lastLoginAt;
+  final String? profileImage;
 
   UserModel copyWith({
     int? id,
@@ -19,6 +21,7 @@ class UserModel {
     String? passwordHash,
     DateTime? createdAt,
     DateTime? lastLoginAt,
+    String? profileImage,
   }) {
     return UserModel(
       id: id ?? this.id,
@@ -26,6 +29,7 @@ class UserModel {
       passwordHash: passwordHash ?? this.passwordHash,
       createdAt: createdAt ?? this.createdAt,
       lastLoginAt: lastLoginAt ?? this.lastLoginAt,
+      profileImage: profileImage ?? this.profileImage,
     );
   }
 
@@ -36,6 +40,7 @@ class UserModel {
       'password_hash': passwordHash,
       'created_at': createdAt.toIso8601String(),
       'last_login_at': lastLoginAt?.toIso8601String(),
+      'profile_image': profileImage,
     };
   }
 
@@ -50,6 +55,7 @@ class UserModel {
       lastLoginAt: lastLoginValue == null
           ? null
           : DateTime.parse(lastLoginValue),
+      profileImage: map['profile_image'] as String?,
     );
   }
 }

@@ -8,7 +8,7 @@ class DatabaseService {
   static final DatabaseService instance = DatabaseService._();
 
   static const _databaseName = 'artesia_gallery.db';
-  static const _databaseVersion = 3;
+  static const _databaseVersion = 4;
   static const usersTable = 'users';
 
   Database? _database;
@@ -41,7 +41,8 @@ class DatabaseService {
         full_name TEXT NOT NULL COLLATE NOCASE UNIQUE,
         password_hash TEXT NOT NULL,
         created_at TEXT NOT NULL,
-        last_login_at TEXT
+        last_login_at TEXT,
+        profile_image TEXT
       )
     ''');
 
@@ -97,6 +98,12 @@ class DatabaseService {
           UNIQUE(user_id, artwork_id)
         )
       ''');
+    }
+
+    if (oldVersion < 4) {
+      await db.execute(
+        'ALTER TABLE $usersTable ADD COLUMN profile_image TEXT'
+      );
     }
   }
 
@@ -171,5 +178,16 @@ class DatabaseService {
     );
 
     return result.map((e) => e['artwork_id'] as int).toList();
+  }
+
+  Future<void> updateProfileImage(int userId, String imagePath) async {
+    final db = await database;
+
+    await db.update(
+      usersTable,
+      {'profile_image': imagePath},
+      where: 'id = ?',
+      whereArgs: [userId],
+    );
   }
 }

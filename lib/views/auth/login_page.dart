@@ -1,12 +1,12 @@
 import 'package:artesia_aplikasi_art_gallery/controllers/auth_controller.dart';
 import 'package:artesia_aplikasi_art_gallery/views/auth/register_page.dart';
-import 'package:artesia_aplikasi_art_gallery/views/main/main_page.dart';
+import 'package:artesia_aplikasi_art_gallery/views/auth/biometric_page.dart';
+//import 'package:artesia_aplikasi_art_gallery/views/main/main_page.dart';
 import 'package:flutter/material.dart';
 import 'package:artesia_aplikasi_art_gallery/widgets/input_field.dart';
 import 'package:artesia_aplikasi_art_gallery/widgets/gallery_accent.dart';
 import 'package:artesia_aplikasi_art_gallery/widgets/app_logo.dart';
 import 'package:artesia_aplikasi_art_gallery/widgets/primary_button.dart';
-
 import 'package:google_fonts/google_fonts.dart';
 
 class LoginPage extends StatefulWidget {
@@ -21,6 +21,7 @@ class _LoginPageState extends State<LoginPage> {
   final _authController = AuthController();
   final _nameController = TextEditingController();
   final _passwordController = TextEditingController();
+  final AuthController authController = AuthController();
   bool _obscurePassword = true;
   bool _isLoading = false;
 
@@ -53,7 +54,7 @@ class _LoginPageState extends State<LoginPage> {
     if (result.isSuccess) {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => const MainPage()),
+        MaterialPageRoute(builder: (_) => const BiometricPage()),
       );
     }
   }

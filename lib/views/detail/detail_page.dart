@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:artesia_aplikasi_art_gallery/controllers/currency_controller.dart';
+import 'package:artesia_aplikasi_art_gallery/controllers/time_controller.dart';
 import 'package:artesia_aplikasi_art_gallery/widgets/app_logo.dart';
 import 'package:artesia_aplikasi_art_gallery/widgets/primary_button.dart';
 import 'package:flutter/material.dart';
@@ -20,6 +21,10 @@ class _DetailPageState extends State<DetailPage> {
   final CurrencyController currencyController = CurrencyController();
   Map<String, double> currencies = {};
 
+  final TimeController timeController = TimeController();
+  Map<String, String> times = {};
+  String currentTime = "--:--";
+
   double convertedPrice = 0;
   String jakartaTime = "--:--";
   final SensorController sensorController = SensorController();
@@ -39,6 +44,7 @@ class _DetailPageState extends State<DetailPage> {
     super.initState();
 
     loadCurrency();
+    loadTime();
 
     sensorController.start(() {
       setState(() {}); // 🔥 WAJIB
@@ -77,6 +83,15 @@ class _DetailPageState extends State<DetailPage> {
     );
   }
 
+  void loadTime() async {
+    final culture = widget.art['location']; // ini culture kamu
+
+    final result = await timeController.getTimeByCulture(culture);
+
+    setState(() {
+      currentTime = result;
+    });
+  }
   
   void loadCurrency() async {
     final rawPrice = parsePrice(widget.art['price']);
@@ -155,33 +170,54 @@ class _DetailPageState extends State<DetailPage> {
 
               /// 📍 LOCATION CENTER
               Text(
-                widget.art['location'],
+                widget.art['location'] ?? "Unknown",
                 textAlign: TextAlign.center,
-                style: GoogleFonts.inter(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
+                style: GoogleFonts.cormorantGaramond(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
 
               const SizedBox(height: 20),
 
+              Column(
+                children: [
+                  Text(
+                    "Local Time",
+                    style: GoogleFonts.inter(fontSize: 12, color: Colors.grey),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    currentTime,
+                    style: GoogleFonts.cormorantGaramond(fontSize: 20),
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 20),
+
               /// 🕒 TIME CARD
-              Container(
-                padding: const EdgeInsets.all(14),
-                decoration: BoxDecoration(
-                  color: Colors.grey[200],
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      "Local Time\n$jakartaTime WIB",
-                      style: GoogleFonts.inter(fontSize: 14),
+              Column(
+                children: times.entries.map((entry) {
+                  return Container(
+                    margin: const EdgeInsets.only(bottom: 10),
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.grey[200],
+                      borderRadius: BorderRadius.circular(10),
                     ),
-                    const Icon(Icons.access_time),
-                  ],
-                ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(entry.key, style: GoogleFonts.inter(fontSize: 14)),
+                        Text(
+                          entry.value,
+                          style: GoogleFonts.cormorantGaramond(fontSize: 18),
+                        ),
+                      ],
+                    ),
+                  );
+                }).toList(),
               ),
 
               const SizedBox(height: 20),

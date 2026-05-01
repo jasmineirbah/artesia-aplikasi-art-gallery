@@ -275,7 +275,7 @@ class _HomePageState extends State<HomePage> {
                 const SizedBox(height: 16),
 
                 SizedBox(
-                  height: 380, // 🔥 WAJIB biar ga overflow
+                  height: 380, 
                   child: isLoading
                       ? const Center(child: CircularProgressIndicator())
                       : ListView.builder(
@@ -380,12 +380,11 @@ class _HomePageState extends State<HomePage> {
 
                       return ArtCard(
                         art: art,
-                        artist: art['artist'],
+                        artist: art['culture'] ?? 'Unknown',
                         title: art['title'],
                         price: art['price'],
                         image: art['image'],
                         medium: art['medium'],
-                        isSmall: true,
 
                         isFavorite: favoriteIds.contains(art['id']),
                         onFavoriteToggle: () => toggleFavorite(art),

@@ -78,7 +78,7 @@ class _NearbyGallerySheetState extends State<NearbyGallerySheet> {
                           Icon(Icons.location_on, size: 16),
                           SizedBox(width: 4),
                           Text(
-                            "Within 10 km",
+                            "Within 50 km",
                             style: GoogleFonts.inter(fontSize: 12),
                           ),
                         ],

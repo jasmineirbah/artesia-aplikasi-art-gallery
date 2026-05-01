@@ -57,7 +57,6 @@ class _CategoryPageState extends State<CategoryPage> {
     });
 
     NotificationService.showFavoriteNotification(
-      context,
       isFavorite: !isAlreadyFavorite,
       artworkTitle: art['title']?.toString() ?? 'Artwork',
     );

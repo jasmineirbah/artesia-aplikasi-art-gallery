@@ -1,100 +1,116 @@
-import 'dart:async';
-
-import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 class NotificationService {
   NotificationService._();
 
-  static OverlayEntry? _currentEntry;
-  static Timer? _timer;
+  static final NotificationService instance = NotificationService._();
 
-  static void showFavoriteNotification(
-    BuildContext context, {
-    required bool isFavorite,
-    required String artworkTitle,
-  }) {
-    _timer?.cancel();
-    _currentEntry?.remove();
-    _currentEntry = null;
+  static const String _channelId = 'artesia_favorite_channel';
+  static const String _channelName = 'Artesia Favorites';
+  static const String _channelDescription =
+      'Notifikasi saat artwork ditambahkan atau dihapus dari favorit';
 
-    final overlay = Overlay.maybeOf(context);
-    if (overlay == null) return;
+  final FlutterLocalNotificationsPlugin _plugin =
+      FlutterLocalNotificationsPlugin();
 
-    final topPadding = MediaQuery.of(context).padding.top;
-    final message = isFavorite
-        ? 'Ditambahkan ke favorit'
-        : 'Dihapus dari favorit';
+  bool _initialized = false;
 
-    final entry = OverlayEntry(
-      builder: (_) => Positioned(
-        top: topPadding + 12,
-        left: 16,
-        right: 16,
-        child: Material(
-          color: Colors.transparent,
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-            decoration: BoxDecoration(
-              color: Colors.black,
-              borderRadius: BorderRadius.circular(14),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.14),
-                  blurRadius: 16,
-                  offset: const Offset(0, 8),
-                ),
-              ],
-            ),
-            child: Row(
-              children: [
-                Icon(
-                  isFavorite ? Icons.favorite : Icons.favorite_border,
-                  color: Colors.white,
-                  size: 20,
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        message,
-                        style: GoogleFonts.inter(
-                          color: Colors.white,
-                          fontSize: 13,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      const SizedBox(height: 2),
-                      Text(
-                        artworkTitle,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.inter(
-                          color: Colors.white70,
-                          fontSize: 11,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
+  Future<void> initialize() async {
+    if (_initialized) return;
+
+    const androidSettings = AndroidInitializationSettings(
+      '@mipmap/ic_launcher',
+    );
+    const darwinSettings = DarwinInitializationSettings(
+      requestAlertPermission: false,
+      requestBadgePermission: false,
+      requestSoundPermission: false,
     );
 
-    _currentEntry = entry;
-    overlay.insert(entry);
+    const initializationSettings = InitializationSettings(
+      android: androidSettings,
+      iOS: darwinSettings,
+      macOS: darwinSettings,
+    );
 
-    _timer = Timer(const Duration(seconds: 2), () {
-      if (_currentEntry == entry) {
-        _currentEntry?.remove();
-        _currentEntry = null;
-      }
-    });
+    await _plugin.initialize(
+      initializationSettings,
+      onDidReceiveNotificationResponse: _onNotificationTap,
+    );
+
+    _initialized = true;
   }
+
+  Future<void> _requestPermissions() async {
+    final androidPlugin = _plugin
+        .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>();
+    await androidPlugin?.requestNotificationsPermission();
+
+    final iosPlugin = _plugin
+        .resolvePlatformSpecificImplementation<IOSFlutterLocalNotificationsPlugin>();
+    await iosPlugin?.requestPermissions(alert: true, badge: true, sound: true);
+
+    final macosPlugin = _plugin
+        .resolvePlatformSpecificImplementation<MacOSFlutterLocalNotificationsPlugin>();
+    await macosPlugin?.requestPermissions(alert: true, badge: true, sound: true);
+  }
+
+  static Future<void> showFavoriteNotification({
+    required bool isFavorite,
+    required String artworkTitle,
+  }) async {
+    await instance._showFavoriteNotification(
+      isFavorite: isFavorite,
+      artworkTitle: artworkTitle,
+    );
+  }
+
+  Future<void> _showFavoriteNotification({
+    required bool isFavorite,
+    required String artworkTitle,
+  }) async {
+    if (!_initialized) {
+      await initialize();
+    }
+
+    await _requestPermissions();
+
+    final androidDetails = AndroidNotificationDetails(
+      _channelId,
+      _channelName,
+      channelDescription: _channelDescription,
+      importance: Importance.max,
+      priority: Priority.high,
+      ticker: 'Artesia',
+      playSound: true,
+      enableVibration: true,
+    );
+
+    const darwinDetails = DarwinNotificationDetails(
+      presentAlert: true,
+      presentBadge: true,
+      presentSound: true,
+    );
+
+    final notificationDetails = NotificationDetails(
+      android: androidDetails,
+      iOS: darwinDetails,
+      macOS: darwinDetails,
+    );
+
+    final body = isFavorite
+        ? 'Ditambahkan ke favorit: $artworkTitle'
+        : 'Dihapus dari favorit: $artworkTitle';
+
+    await _plugin.show(
+      DateTime.now().millisecondsSinceEpoch.remainder(2147483647),
+      'Artesia',
+      body,
+      notificationDetails,
+      payload: artworkTitle,
+    );
+  }
+
+  void _onNotificationTap(NotificationResponse response) {}
 }

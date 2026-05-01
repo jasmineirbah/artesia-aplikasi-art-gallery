@@ -53,7 +53,6 @@ class _FavoritePageState extends State<FavoritePage> {
     });
 
     NotificationService.showFavoriteNotification(
-      context,
       isFavorite: false,
       artworkTitle: art['title']?.toString() ?? 'Artwork',
     );

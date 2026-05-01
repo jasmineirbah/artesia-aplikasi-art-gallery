@@ -86,7 +86,6 @@ class _HomePageState extends State<HomePage> {
     });
 
     NotificationService.showFavoriteNotification(
-      context,
       isFavorite: !isAlreadyFavorite,
       artworkTitle: art['title']?.toString() ?? 'Artwork',
     );

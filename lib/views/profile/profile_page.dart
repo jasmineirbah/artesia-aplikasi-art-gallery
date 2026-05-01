@@ -2,6 +2,7 @@
 
 import 'dart:io';
 import 'package:artesia_aplikasi_art_gallery/utils/hash_helper.dart';
+import 'package:artesia_aplikasi_art_gallery/widgets/input_field.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
@@ -27,6 +28,8 @@ class _ProfilePageState extends State<ProfilePage> {
   String username = "";
   String? imagePath;
   int? userId;
+  bool isPasswordVisible = false;
+  String tempPassword = "••••••••";
 
   @override
   void initState() {
@@ -80,66 +83,215 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   void showEditUsernameDialog() {
-    TextEditingController controller =
-        TextEditingController(text: username);
+    final controller = TextEditingController(text: username);
 
     showDialog(
       context: context,
-      builder: (_) => AlertDialog(
-        title: const Text("Edit Username"),
-        content: TextField(controller: controller),
-        actions: [
-          TextButton(
-            onPressed: () async {
-              final newName = controller.text;
-
-              await DatabaseService.instance.updateUsername(
-                userId!,
-                newName,
-              );
-
-              setState(() {
-                username = newName;
-              });
-
-              Navigator.pop(context);
-            },
-            child: const Text("Save"),
+      builder: (dialogContext) {
+        return AlertDialog(
+          backgroundColor: const Color(0xFFFBF9F4),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
           ),
-        ],
-      ),
+          title: Center(
+            child: Text(
+              "Edit Username",
+              style: GoogleFonts.inter(
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+          content: TextField(
+            controller: controller,
+            style: GoogleFonts.inter(
+              fontSize: 14, 
+            ),
+            decoration: InputDecoration(
+              hintText: "Enter username",
+              hintStyle: GoogleFonts.inter(
+                fontSize: 14,
+                color: Colors.grey[500],
+              ),
+
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 14,
+              ),
+
+              filled: true,
+              fillColor: Colors.white,
+
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide.none,
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide.none,
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide.none,
+              ),
+            ),
+          ),
+          actionsAlignment: MainAxisAlignment.center,
+          actions: [
+            TextButton(
+              onPressed: () async {
+                final newName = controller.text.trim();
+
+                if (newName.isEmpty) return;
+
+                await DatabaseService.instance.updateUsername(
+                  userId!,
+                  newName,
+                );
+
+                await SessionService().saveUser(newName);
+
+                setState(() {
+                  username = newName;
+                });
+
+                Navigator.pop(dialogContext); 
+
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text("Username updated.")),
+                );
+              },
+              child: Text(
+                "Save",
+                style: GoogleFonts.inter(
+                  fontWeight: FontWeight.w500,
+                  color: Colors.black,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 
   void showChangePasswordDialog() {
-    TextEditingController controller = TextEditingController();
+    final controller = TextEditingController();
+    bool isObscure = true;
 
     showDialog(
       context: context,
-      builder: (_) => AlertDialog(
-        title: const Text("Change Password"),
-        content: TextField(
-          controller: controller,
-          obscureText: true,
-        ),
-        actions: [
-          TextButton(
-            onPressed: () async {
-              final newPass = controller.text;
+      builder: (dialogContext) {
+        return StatefulBuilder(
+          builder: (context, setStateDialog) {
+            return AlertDialog(
+              backgroundColor: const Color(0xFFFBF9F4),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              title: Center(
+                child: Text(
+                  "Change Password",
+                  style: GoogleFonts.inter(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+              content: TextField(
+                controller: controller,
+                obscureText: isObscure,
+                style: GoogleFonts.inter(
+                  fontSize: 14, 
+                ),
+                decoration: InputDecoration(
+                  hintText: "Enter new password",
+                  hintStyle: GoogleFonts.inter(
+                    fontSize: 14,
+                    color: Colors.grey[500],
+                  ),
 
-              final hash = HashHelper.hashPassword(newPass);
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 14,
+                  ),
 
-              await DatabaseService.instance.updatePassword(
-                userId!,
-                hash,
-              );
+                  filled: true,
+                  fillColor: Colors.white,
 
-              Navigator.pop(context);
-            },
-            child: const Text("Save"),
-          ),
-        ],
-      ),
+                  /// 🔥 ICON 👁
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      isObscure ? Icons.visibility_off : Icons.visibility,
+                      size: 18, // 🔥 jangan terlalu kecil
+                      color: Colors.grey[600],
+                    ),
+                    onPressed: () {
+                      setStateDialog(() {
+                        isObscure = !isObscure;
+                      });
+                    },
+                  ),
+
+                  /// 🔥 BIAR GA KEGESER
+                  suffixIconConstraints: const BoxConstraints(
+                    minHeight: 40,
+                    minWidth: 40,
+                  ),
+
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide.none,
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide.none,
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide.none,
+                  ),
+                ),
+              ),
+              actionsAlignment: MainAxisAlignment.center,
+              actions: [
+                TextButton(
+                  onPressed: () async {
+                    final newPass = controller.text.trim();
+
+                    if (newPass.length < 6) return;
+
+                    final hash = HashHelper.hashPassword(newPass);
+
+                    await DatabaseService.instance.updatePassword(
+                      userId!,
+                      hash,
+                    );
+
+                    setState(() {
+                      tempPassword = newPass;
+                    });
+
+                    Navigator.pop(dialogContext); 
+
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text("Password updated.")),
+                    );
+                  },
+                  child: Text(
+                    "Save",
+                    style: GoogleFonts.inter(
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black,
+                      fontSize: 14,
+                    ),
+                  ),
+                ),
+              ],
+            );
+          },
+        );
+      },
     );
   }
 
@@ -161,17 +313,39 @@ class _ProfilePageState extends State<ProfilePage> {
           children: [
             const SizedBox(height: 20),
 
-            GestureDetector(
-              onTap: pickImage,
-              child: CircleAvatar(
-                radius: 50,
-                backgroundColor: Colors.grey[300],
-                backgroundImage:
-                    imagePath != null ? FileImage(File(imagePath!)) : null,
-                child: imagePath == null
-                    ? const Icon(Icons.camera_alt)
-                    : null,
-              ),
+            Stack(
+              children: [
+                CircleAvatar(
+                  radius: 50,
+                  backgroundColor: Colors.grey[300],
+                  backgroundImage:
+                      imagePath != null ? FileImage(File(imagePath!)) : null,
+                  child: imagePath == null
+                      ? const Icon(Icons.person, size: 40)
+                      : null,
+                ),
+
+                /// 🔥 ICON EDIT (POJOK KANAN BAWAH)
+                Positioned(
+                  bottom: 0,
+                  right: 0,
+                  child: GestureDetector(
+                    onTap: pickImage,
+                    child: Container(
+                      padding: const EdgeInsets.all(6),
+                      decoration: BoxDecoration(
+                        color: Colors.black,
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(
+                        Icons.edit,
+                        size: 14,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
 
             const SizedBox(height: 16),
@@ -179,7 +353,7 @@ class _ProfilePageState extends State<ProfilePage> {
             Text(
               username.isEmpty ? "Loading..." : username,
               style: GoogleFonts.inter(
-                fontSize: 18,
+                fontSize: 16,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -192,29 +366,40 @@ class _ProfilePageState extends State<ProfilePage> {
               () => showEditUsernameDialog(),
             ),
 
-            _buildEditableItem(
-              "Password",
-              "••••••••",
-              () => showChangePasswordDialog(),
-            ),
+            const SizedBox(height: 24),
 
-            const SizedBox(height: 10),
+            _buildPasswordItem(),
+
+            const SizedBox(height: 20),
 
             GestureDetector(
               onTap: () => showNearby(context),
-              child: Column(
-                children: [
-                  Text(
-                    "Nearby Galleries",
-                    style: GoogleFonts.cormorantGaramond(fontSize: 16),
-                  ),
-                  const SizedBox(height: 4),
-                  Container(width: 108, height: 2, color: const Color.fromARGB(255, 123, 120, 120)),
-                ],
+              child: Container(
+                padding: const EdgeInsets.symmetric(vertical: 4),
+                child: Row(
+                  children: [
+                    /// 🔹 TEXT (KIRI)
+                    Expanded(
+                      child: Text(
+                        "Nearby Galleries",
+                        style: GoogleFonts.cormorantGaramond(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                    ),
+
+                    /// 🔹 ICON (KANAN)
+                    IconButton(
+                      icon: const Icon(Icons.arrow_forward_ios, size: 16),
+                      onPressed: () => showNearby(context),
+                    )
+                  ],
+                ),
               ),
             ),
 
-            const SizedBox(height: 30),
+            const SizedBox(height: 20),
 
             SizedBox(
               width: double.infinity,
@@ -234,29 +419,55 @@ class _ProfilePageState extends State<ProfilePage> {
     String value,
     VoidCallback onEdit,
   ) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 12),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+    return InputField(
+      controller: TextEditingController(text: value),
+      label: title.toUpperCase(),
+      readOnly: true,
+
+      suffixIcon: IconButton(
+        padding: EdgeInsets.zero,
+        constraints: const BoxConstraints(),
+        icon: const Icon(Icons.edit, size: 16),
+        onPressed: onEdit,
+      ),
+    );
+  }
+
+  Widget _buildPasswordItem() {
+    return InputField(
+      controller: TextEditingController(
+        text: isPasswordVisible ? tempPassword : "••••••••",
+      ),
+      label: 'PASSWORD',
+      hintText: '', // 🔥 TAMBAH DI SINI
+      readOnly: true,
+      obscureText: !isPasswordVisible,
+
+      suffixIcon: Row(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Text(title, style: const TextStyle(color: Colors.grey)),
-
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  value,
-                  style: const TextStyle(fontWeight: FontWeight.w600),
-                ),
-              ),
-              IconButton(
-                icon: const Icon(Icons.edit, size: 18),
-                onPressed: onEdit,
-              ),
-            ],
+          IconButton(
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(),
+            icon: Icon(
+              isPasswordVisible
+                  ? Icons.visibility_outlined
+                  : Icons.visibility_off_outlined,
+              size: 16,
+            ),
+            onPressed: () {
+              setState(() {
+                isPasswordVisible = !isPasswordVisible;
+              });
+            },
           ),
-
-          const Divider(),
+          const SizedBox(width: 4),
+          IconButton(
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(),
+            icon: const Icon(Icons.edit, size: 16),
+            onPressed: showChangePasswordDialog,
+          ),
         ],
       ),
     );

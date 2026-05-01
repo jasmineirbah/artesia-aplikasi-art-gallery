@@ -106,7 +106,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             InputField(
                               controller: _fullNameController,
                               label: 'USERNAME',
-                              hintText: 'write your name',
+                              hintText: 'Enter username',
                               textInputAction: TextInputAction.next,
                               validator: _authController.validateFullName,
                             ),
@@ -114,7 +114,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             InputField(
                               controller: _passwordController,
                               label: 'PASSWORD',
-                              hintText: '•••••••',
+                              hintText: 'Enter password',
                               obscureText: _obscurePassword,
                               textInputAction: TextInputAction.next,
                               validator: _authController.validatePassword,
@@ -138,7 +138,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             InputField(
                               controller: _confirmPasswordController,
                               label: 'CONFIRM PASSWORD',
-                              hintText: '•••••••',
+                              hintText: 'Enter password',
                               obscureText: _obscureConfirmPassword,
                               textInputAction: TextInputAction.done,
                               onFieldSubmitted: (_) => _submitRegister(),

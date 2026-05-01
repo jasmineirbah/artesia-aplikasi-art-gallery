@@ -6,12 +6,13 @@ class InputField extends StatelessWidget {
     super.key,
     required this.controller,
     required this.label,
-    required this.hintText,
+    this.hintText = '',
     this.textInputAction,
     this.obscureText = false,
     this.validator,
     this.onFieldSubmitted,
     this.suffixIcon,
+    this.readOnly = false,
   });
 
   final TextEditingController controller;
@@ -22,6 +23,7 @@ class InputField extends StatelessWidget {
   final String? Function(String?)? validator;
   final ValueChanged<String>? onFieldSubmitted;
   final Widget? suffixIcon;
+  final bool readOnly;
 
   @override
   Widget build(BuildContext context) {

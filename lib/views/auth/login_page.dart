@@ -110,7 +110,7 @@ class _LoginPageState extends State<LoginPage> {
                             InputField(
                               controller: _nameController,
                               label: 'USERNAME',
-                              hintText: 'write your name',
+                              hintText: 'Enter username',
                               textInputAction: TextInputAction.next,
                               validator: _authController.validateFullName,
                             ),
@@ -120,7 +120,7 @@ class _LoginPageState extends State<LoginPage> {
                             InputField(
                               controller: _passwordController,
                               label: 'PASSWORD',
-                              hintText: '•••••••',
+                              hintText: 'Enter password',
                               obscureText: _obscurePassword,
                               validator: _authController.validatePassword,
                               suffixIcon: IconButton(

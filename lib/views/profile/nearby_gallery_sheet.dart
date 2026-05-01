@@ -69,7 +69,7 @@ class _NearbyGallerySheetState extends State<NearbyGallerySheet> {
                         ),
                       ),
 
-                      const SizedBox(height: 8),
+                      const SizedBox(height: 14),
 
                       /// 🔥 ICON MAP
                       Row(

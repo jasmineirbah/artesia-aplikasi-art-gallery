@@ -50,12 +50,13 @@ class _BiometricPageState extends State<BiometricPage> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: const [
-              Icon(Icons.fingerprint, size: 70),
-              SizedBox(height: 16),
               Text(
                 "Tap to verify your identity",
                 style: TextStyle(fontSize: 14),
               ),
+              SizedBox(height: 16),
+              Icon(Icons.fingerprint, size: 70),
+              SizedBox(height: 16),
             ],
           ),
         ),

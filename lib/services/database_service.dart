@@ -278,7 +278,7 @@ class DatabaseService {
     final db = await database;
     await db.update(
       'users',
-      {'fullName': name},
+      {'full_name': name}, // ✅ BENAR
       where: 'id = ?',
       whereArgs: [id],
     );
@@ -288,7 +288,7 @@ class DatabaseService {
     final db = await database;
     await db.update(
       'users',
-      {'passwordHash': passwordHash},
+      {'password_hash': passwordHash}, // ✅ BENAR
       where: 'id = ?',
       whereArgs: [id],
     );

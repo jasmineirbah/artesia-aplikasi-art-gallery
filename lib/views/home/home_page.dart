@@ -6,6 +6,7 @@ import 'package:artesia_aplikasi_art_gallery/services/api_service.dart';
 import 'package:artesia_aplikasi_art_gallery/widgets/art_card.dart';
 import 'package:artesia_aplikasi_art_gallery/services/database_service.dart';
 import 'package:artesia_aplikasi_art_gallery/services/notification_service.dart';
+import 'package:artesia_aplikasi_art_gallery/controllers/search_controller.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -16,6 +17,9 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final ApiService _apiService = ApiService();
+
+  final SearchController searchController = SearchController();
+  List<Map<String, dynamic>> filteredArtworks = [];
 
   List<Map<String, dynamic>> artworks = [];
   List<String> categories = [];
@@ -29,6 +33,7 @@ class _HomePageState extends State<HomePage> {
     "Prints",
     "Sculpture",
   ];
+  
 
   @override
   void initState() {
@@ -45,6 +50,7 @@ class _HomePageState extends State<HomePage> {
 
       setState(() {
         artworks = data;
+        filteredArtworks = data; // 🔥 WAJIB BIAR SEARCH ADA DATA
         extractCategories();
         isLoading = false;
       });
@@ -119,6 +125,21 @@ class _HomePageState extends State<HomePage> {
         if (categories.length == 4) break;
       }
     }
+  }
+
+  void onSearch(String value) {
+    if (value.isEmpty) {
+      setState(() {
+        filteredArtworks = artworks;
+      });
+      return;
+    }
+
+    final result = searchController.search(value, artworks);
+
+    setState(() {
+      filteredArtworks = result;
+    });
   }
 
   @override
@@ -221,6 +242,7 @@ class _HomePageState extends State<HomePage> {
                   children: [
                     Expanded(
                       child: TextField(
+                        onChanged: onSearch,
                         style: GoogleFonts.inter(
                           fontSize: 13, // 🔥 isi text
                           color: Colors.black,
@@ -279,9 +301,9 @@ class _HomePageState extends State<HomePage> {
                       ? const Center(child: CircularProgressIndicator())
                       : ListView.builder(
                           scrollDirection: Axis.horizontal,
-                          itemCount: artworks.length,
+                          itemCount: filteredArtworks.length,
                           itemBuilder: (context, index) {
-                            final art = artworks[index];
+                            final art = filteredArtworks[index];
 
                             return ArtCard(
                               art: art,
@@ -373,9 +395,9 @@ class _HomePageState extends State<HomePage> {
                   height: 380,
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
-                    itemCount: artworks.length,
+                    itemCount: filteredArtworks.length,
                     itemBuilder: (context, index) {
-                      final art = artworks[index];
+                      final art = filteredArtworks[index];
 
                       return ArtCard(
                         art: art,

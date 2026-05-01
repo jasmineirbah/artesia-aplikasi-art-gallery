@@ -18,25 +18,11 @@ class NotificationService {
   Future<void> initialize() async {
     if (_initialized) return;
 
-    const androidSettings = AndroidInitializationSettings(
-      '@mipmap/ic_launcher',
-    );
-    const darwinSettings = DarwinInitializationSettings(
-      requestAlertPermission: false,
-      requestBadgePermission: false,
-      requestSoundPermission: false,
-    );
-
     const initializationSettings = InitializationSettings(
-      android: androidSettings,
-      iOS: darwinSettings,
-      macOS: darwinSettings,
+      android: AndroidInitializationSettings('@mipmap/ic_launcher'),
     );
 
-    await _plugin.initialize(
-      initializationSettings,
-      onDidReceiveNotificationResponse: _onNotificationTap,
-    );
+    await _plugin.initialize(initializationSettings);
 
     _initialized = true;
   }
@@ -112,5 +98,7 @@ class NotificationService {
     );
   }
 
-  void _onNotificationTap(NotificationResponse response) {}
+  void _onNotificationTap(NotificationResponse response) {
+    print("Notif diklik: ${response.payload}");
+  }
 }

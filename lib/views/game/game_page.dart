@@ -15,20 +15,24 @@ class _GamePageState extends State<GamePage> {
   int currentIndex = 0;
   int score = 0;
   bool isLoading = true;
-  final ShakeController shakeController = ShakeController();
+
+  bool isStarted = false;
+  bool isFinished = false;
 
   String? selectedAnswer;
+
+  final ShakeController shakeController = ShakeController();
 
   @override
   void initState() {
     super.initState();
 
-    loadGame();
-
+    /// 🔥 SHAKE SENSOR
     shakeController.start(() {
-      print("SHAKE DETECTED"); // 🔥 TAMBAH INI
       skipQuestion();
     });
+
+    loadGame();
   }
 
   @override
@@ -37,7 +41,10 @@ class _GamePageState extends State<GamePage> {
     super.dispose();
   }
 
- void skipQuestion() {
+  /// 🔥 SKIP VIA SHAKE
+  void skipQuestion() {
+    if (!isStarted || isFinished) return;
+
     setState(() {
       currentIndex = (currentIndex + 1) % questions.length;
       selectedAnswer = null;
@@ -47,10 +54,21 @@ class _GamePageState extends State<GamePage> {
   Future<void> loadGame() async {
     final data = await GameService().fetchQuestions();
 
-    data.shuffle();
+    final shuffled = List.from(data);
+    shuffled.shuffle();
+
+    final selected = shuffled.take(5).map((q) {
+      final options = List<String>.from(q['options']);
+      options.shuffle();
+
+      return {
+        ...q,
+        'options': options,
+      };
+    }).toList();
 
     setState(() {
-      questions = data.take(5).toList();
+      questions = selected;
       isLoading = false;
     });
   }
@@ -73,152 +91,223 @@ class _GamePageState extends State<GamePage> {
           selectedAnswer = null;
         });
       } else {
-        showResult();
+        setState(() {
+          isFinished = true;
+        });
       }
     });
   }
 
-  void showResult() {
-    showDialog(
-      context: context,
-      builder: (_) => AlertDialog(
-        title: const Text("Finished 🎉"),
-        content: Text("Score kamu: $score / 5"),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              setState(() {
-                currentIndex = 0;
-                score = 0;
-                loadGame();
-              });
-            },
-            child: const Text("Main Lagi"),
-          )
-        ],
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
-    /// 🔥 1. LOADING
+    /// 🔥 LOADING
     if (isLoading) {
       return const Scaffold(
         body: Center(child: CircularProgressIndicator()),
       );
     }
 
-    /// 🔥 2. DATA KOSONG
-    if (questions.isEmpty) {
-      return const Scaffold(
-        body: Center(child: Text("No questions found")),
+    /// 🔥 START PAGE
+    if (!isStarted) {
+      return Scaffold(
+        backgroundColor: const Color(0xFFFBF9F4),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                "Art Quiz 🎨",
+                style: GoogleFonts.cormorantGaramond(
+                  fontSize: 32,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.black,
+                  foregroundColor: Colors.white,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 30, vertical: 14),
+                ),
+                onPressed: () async {
+                  setState(() {
+                    isStarted = true;
+                    isFinished = false;
+                    currentIndex = 0;
+                    score = 0;
+                    selectedAnswer = null;
+                    isLoading = true;
+                  });
+
+                  await loadGame();
+                },
+                child: const Text("Start Game"),
+              ),
+            ],
+          ),
+        ),
       );
     }
 
+    /// 🔥 END PAGE
+    if (isFinished) {
+      return Scaffold(
+        backgroundColor: const Color(0xFFFBF9F4),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                "Game Over 🎉",
+                style: GoogleFonts.cormorantGaramond(
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 10),
+              Text(
+                "Score: $score / ${questions.length}",
+                style: GoogleFonts.inter(fontSize: 18),
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.black,
+                  foregroundColor: Colors.white,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 30, vertical: 14),
+                ),
+                onPressed: () async {
+                  setState(() {
+                    isFinished = false;
+                    isStarted = false;
+                    currentIndex = 0;
+                    score = 0;
+                    selectedAnswer = null;
+                    isLoading = true;
+                  });
+
+                  await loadGame();
+                },
+                child: const Text("Play Again"),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    /// 🔥 GAME PAGE
     final q = questions[currentIndex];
 
     return Scaffold(
       backgroundColor: const Color(0xFFFBF9F4),
-
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            children: [
-              /// 🔙 BACK + PROGRESS
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  GestureDetector(
-                    onTap: () => Navigator.pop(context),
-                    child: const Icon(Icons.arrow_back),
-                  ),
-                  Text(
-                    "${currentIndex + 1} / 5",
-                    style: GoogleFonts.inter(fontSize: 14),
-                  ),
-                ],
-              ),
-
-              const SizedBox(height: 20),
-
-              /// 🖼 IMAGE
-              Container(
-                height: 250,
-                width: double.infinity,
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
-                      blurRadius: 10,
-                    )
-                  ],
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                /// PROGRESS
+                Text(
+                  "${currentIndex + 1} / ${questions.length}",
+                  style: GoogleFonts.inter(fontSize: 14),
                 ),
-                child: Image.network(
-                  q['image'],
-                  fit: BoxFit.contain,
-                ),
-              ),
 
-              const SizedBox(height: 20),
+                const SizedBox(height: 30),
 
-              /// ❓ QUESTION
-              Text(
-                q['question'],
-                textAlign: TextAlign.center,
-                style: GoogleFonts.cormorantGaramond(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-
-              const SizedBox(height: 20),
-
-              /// 🔘 OPTIONS
-              Column(
-                children: List.generate(q['options'].length, (index) {
-                  final option = q['options'][index];
-
-                  final isSelected = selectedAnswer == option;
-                  final isCorrect =
-                      option == q['correct_answer'];
-
-                  Color bgColor = Colors.white;
-
-                  if (selectedAnswer != null) {
-                    if (isCorrect) {
-                      bgColor = Colors.green.shade100;
-                    } else if (isSelected) {
-                      bgColor = Colors.red.shade100;
-                    }
-                  }
-
-                  return GestureDetector(
-                    onTap: selectedAnswer == null
-                        ? () => selectAnswer(option)
-                        : null,
-                    child: Container(
-                      width: double.infinity,
-                      margin: const EdgeInsets.only(bottom: 12),
-                      padding: const EdgeInsets.all(14),
-                      decoration: BoxDecoration(
-                        color: bgColor,
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: Colors.grey.shade300),
-                      ),
-                      child: Text(
-                        option,
-                        style: GoogleFonts.inter(fontSize: 14),
+                /// IMAGE (FIX WIDTH)
+                Center(
+                  child: Container(
+                    constraints: const BoxConstraints(maxWidth: 300),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: AspectRatio(
+                        aspectRatio: 16 / 9,
+                        child: Image.network(
+                          q['image'],
+                          fit: BoxFit.cover,
+                          errorBuilder: (_, __, ___) => Container(
+                            color: Colors.grey[200],
+                            child: const Center(
+                              child: Icon(Icons.broken_image),
+                            ),
+                          ),
+                        ),
                       ),
                     ),
-                  );
-                }),
-              ),
-            ],
+                  ),
+                ),
+
+                const SizedBox(height: 20),
+
+                /// QUESTION
+                Text(
+                  q['question'],
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.cormorantGaramond(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+
+                const SizedBox(height: 20),
+
+                /// OPTIONS
+                Column(
+                  children:
+                      List.generate(q['options'].length, (index) {
+                    final option = q['options'][index];
+
+                    final isSelected = selectedAnswer == option;
+                    final isCorrect =
+                        option == q['correct_answer'];
+
+                    Color bgColor = Colors.white;
+
+                    if (selectedAnswer != null) {
+                      if (isCorrect) {
+                        bgColor = Colors.green.shade100;
+                      } else if (isSelected) {
+                        bgColor = Colors.red.shade100;
+                      }
+                    }
+
+                    return Center(
+                      child: Container(
+                        constraints:
+                            const BoxConstraints(maxWidth: 300),
+                        margin: const EdgeInsets.only(bottom: 12),
+                        child: GestureDetector(
+                          onTap: selectedAnswer == null
+                              ? () => selectAnswer(option)
+                              : null,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 14, horizontal: 16),
+                            decoration: BoxDecoration(
+                              color: bgColor,
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                  color: Colors.grey.shade300),
+                            ),
+                            child: Center(
+                              child: Text(
+                                option,
+                                textAlign: TextAlign.center,
+                                style: GoogleFonts.inter(fontSize: 14),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  }),
+                ),
+              ],
+            ),
           ),
         ),
       ),

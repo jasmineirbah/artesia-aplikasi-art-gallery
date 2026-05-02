@@ -384,7 +384,7 @@ class _DetailPageState extends State<DetailPage> {
                   child: SizedBox(
                     width: double.infinity,
                     child: PrimaryButton(
-                      text: "SHOW LOCATION",
+                      text: "WORLD TIME",
                       onPressed: showLocationPopup,
                   ),
                 ),

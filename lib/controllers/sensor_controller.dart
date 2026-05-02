@@ -11,15 +11,15 @@ class SensorController {
 
   void start(void Function() updateUI) {
     _service.onUpdate = (x, y) {
-      /// 🎯 target dari sensor
+      // target dari sensor
       targetX = y * 30;
       targetY = x * 30;
 
-      /// 🎯 smoothing (lerp)
+      // smoothing (lerp)
       offsetX += (targetX - offsetX) * 0.1;
       offsetY += (targetY - offsetY) * 0.1;
 
-      /// batas biar ga liar
+      // batas biar ga liar
       offsetX = offsetX.clamp(-25, 25);
       offsetY = offsetY.clamp(-25, 25);
 

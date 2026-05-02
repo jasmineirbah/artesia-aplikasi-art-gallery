@@ -35,12 +35,12 @@ class MyApp extends StatelessWidget {
             );
           }
 
-          /// 🔥 kalau sudah login
+          // untuk kalau sudah login
           if (snapshot.data == true) {
             return const MainPage();
           }
 
-          /// 🔥 kalau belum login
+          // untuk kalau belum login
           return const LoginPage();
         },
       ),

@@ -50,7 +50,7 @@ class _DetailPageState extends State<DetailPage> {
     loadTime();
 
     sensorController.start(() {
-      setState(() {}); // 🔥 WAJIB
+      setState(() {}); 
     });
   }
 
@@ -114,7 +114,7 @@ class _DetailPageState extends State<DetailPage> {
     super.dispose();
   }
 
-  /// 📍 POPUP LOCATION
+  // POPUP LOCATION
   void showLocationPopup() async {
     final worldTimes = await timeService.getWorldTimes();
 
@@ -147,7 +147,7 @@ class _DetailPageState extends State<DetailPage> {
                 ),
               ),
 
-              /// 🔥 TITLE (CENTER)
+              // TITLE 
               Text(
                 "Exhibition Location",
                 textAlign: TextAlign.center,
@@ -159,7 +159,7 @@ class _DetailPageState extends State<DetailPage> {
 
               const SizedBox(height: 10),
 
-              /// 📍 LOCATION CENTER
+              // LOCATION CENTER
               Text(
                 widget.art['location'] ?? "Unknown",
                 textAlign: TextAlign.center,
@@ -187,7 +187,7 @@ class _DetailPageState extends State<DetailPage> {
 
               const SizedBox(height: 20),
 
-              /// 🕒 TIME CARD
+              // TIME CARD
               Column(
                 children: times.entries.map((entry) {
                   return Container(
@@ -250,7 +250,7 @@ class _DetailPageState extends State<DetailPage> {
                 padding: const EdgeInsets.symmetric(horizontal: 28),
                 child: Column(
                   children: [
-                    /// 🎨 TITLE
+                    // TITLE
                     Text(
                       art['artist'],
                       textAlign: TextAlign.center,
@@ -266,7 +266,7 @@ class _DetailPageState extends State<DetailPage> {
 
                     const SizedBox(height: 20),
 
-                    /// 🖼 IMAGE
+                    // IMAGE
                     Container(
                       height: 320,
                       width: double.infinity,
@@ -310,7 +310,7 @@ class _DetailPageState extends State<DetailPage> {
 
                     const SizedBox(height: 20),
 
-                    /// 📄 INFO
+                    // INFO
                     Text(art['medium'], style: GoogleFonts.inter(fontSize: 13)),
 
                     const SizedBox(height: 6),
@@ -322,7 +322,7 @@ class _DetailPageState extends State<DetailPage> {
 
                     const SizedBox(height: 20),
 
-                    /// 💰 PRICE ORIGINAL
+                    // PRICE ORIGINAL
                     Text(
                       art['price'],
                       style: GoogleFonts.inter(
@@ -333,7 +333,7 @@ class _DetailPageState extends State<DetailPage> {
 
                     const SizedBox(height: 10),
 
-                    /// 💱 CONVERTED
+                    // CONVERTED
                     Container(
                       margin: const EdgeInsets.symmetric(horizontal: 24),
                       padding: const EdgeInsets.all(16),
@@ -378,7 +378,7 @@ class _DetailPageState extends State<DetailPage> {
               ),
               const SizedBox(height: 30),
 
-              /// 📍 BUTTON
+              // BUTTON
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: SizedBox(

@@ -31,7 +31,7 @@ class _NearbyGallerySheetState extends State<NearbyGallerySheet> {
     setState(() {});
   }
 
-  /// 🔥 HANDLE IMAGE (NETWORK + ASSET)
+  // HANDLE IMAGE (NETWORK + ASSET)
   Widget buildImage(String image) {
     if (image.startsWith('http')) {
       return Image.network(

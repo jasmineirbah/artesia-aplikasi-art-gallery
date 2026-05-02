@@ -23,17 +23,17 @@ class KesanPesanPage extends StatelessWidget {
             color: Colors.black.withOpacity(0.25),
           ),
 
-          /// ✨ CONTENT
+          // CONTENT
           SafeArea(
             child: Center(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24),
 
-                /// 🔥 GLASS CARD (KAYAK CATEGORIES)
+                // GLASS CARD 
                 child: Container(
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.30), // 🔥 transparan
+                    color: Colors.white.withOpacity(0.30), 
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
                       color: Colors.white.withOpacity(0.2),

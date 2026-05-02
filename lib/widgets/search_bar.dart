@@ -10,7 +10,7 @@ class SearchBarWidget extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 12),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(30), // beda dari login
+        borderRadius: BorderRadius.circular(30), 
       ),
       child: TextField(
         decoration: InputDecoration(

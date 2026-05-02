@@ -229,11 +229,11 @@ class _ProfilePageState extends State<ProfilePage> {
                   filled: true,
                   fillColor: Colors.white,
 
-                  /// 🔥 ICON 👁
+                  // ICON 
                   suffixIcon: IconButton(
                     icon: Icon(
                       isObscure ? Icons.visibility_off : Icons.visibility,
-                      size: 18, // 🔥 jangan terlalu kecil
+                      size: 18, 
                       color: Colors.grey[600],
                     ),
                     onPressed: () {
@@ -243,7 +243,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     },
                   ),
 
-                  /// 🔥 BIAR GA KEGESER
+                  //
                   suffixIconConstraints: const BoxConstraints(
                     minHeight: 40,
                     minWidth: 40,
@@ -335,7 +335,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       : null,
                 ),
 
-                /// 🔥 ICON EDIT (POJOK KANAN BAWAH)
+                // ICON EDIT 
                 Positioned(
                   bottom: 0,
                   right: 0,

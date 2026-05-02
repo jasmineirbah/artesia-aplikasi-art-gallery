@@ -4,7 +4,7 @@ import 'package:intl/intl.dart';
 class ApiService {
   Future<List<Map<String, dynamic>>> fetchArtworks() async {
     try {
-      /// 🔍 STEP 1: SEARCH PAINTINGS
+      // SEARCH PAINTINGS
       final searchUrl = Uri.parse(
         "https://collectionapi.metmuseum.org/public/collection/v1/search?q=painting&hasImages=true",
       );
@@ -19,12 +19,12 @@ class ApiService {
 
       final List ids = searchData['objectIDs'] ?? [];
 
-      /// 🔥 ambil maksimal 10 biar ga berat
+      // ambil maksimal 50 
       final limitedIds = ids.take(50).toList();
 
       List<Map<String, dynamic>> artworks = [];
 
-      /// 🎨 STEP 2: GET DETAIL PER ARTWORK
+      // GET DETAIL PER ARTWORK
       for (var id in limitedIds) {
         try {
           final detailUrl = Uri.parse(
@@ -42,7 +42,7 @@ class ApiService {
           final price = (1500 + (id % 10) * 1200) * 15000;
           final formatter = NumberFormat('#,###', 'id_ID');
 
-          /// 🔥 skip kalau ga ada gambar
+          // skip kalau ga ada gambar
           if (image == null || image.toString().isEmpty) continue;
 
           artworks.add({
@@ -51,14 +51,14 @@ class ApiService {
             'artist': data['artistDisplayName'] ?? 'Unknown Artist',
             'image': image,
 
-            /// 🔥 tambahan data penting
+            // tambahan data penting
             'category': data['classification'] ?? 'Art',
             'culture': data['culture'] ?? 'Unknown',
             'medium': data['medium'] ?? 'Unknown',
             'dimensions': data['dimensions'] ?? 'Unknown size',
             'location': data['repository'] ?? 'Unknown Museum',
 
-            /// 💰 dummy price (stabil)
+            // dummy price (stabil)
 
             'price': 'Rp ${formatter.format(price)}',
           });

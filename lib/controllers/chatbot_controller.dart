@@ -21,7 +21,7 @@ class ChatbotController {
       return "Searching for flower-themed art 🌸";
     }
 
-    // 🔥 FALLBACK → GEMINI
+    // FALLBACK → GEMINI
     try {
       return await GeminiService.sendMessage(
         "Kamu adalah asisten aplikasi galeri seni bernama Artesia. Jawab singkat dan ramah.\nUser: $message",

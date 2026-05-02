@@ -26,7 +26,7 @@ class _HomePageState extends State<HomePage> {
   List<Map<String, dynamic>> artworks = [];
   List<String> categories = [];
   bool isLoading = true;
-  Set<int> favoriteIds = {}; // 🔥 simpan id artwork
+  Set<int> favoriteIds = {}; 
   late int userId; //
 
   final List<String> validCategories = [
@@ -75,7 +75,7 @@ class _HomePageState extends State<HomePage> {
 
       setState(() {
         artworks = data;
-        filteredArtworks = data; // 🔥 WAJIB BIAR SEARCH ADA DATA
+        filteredArtworks = data; 
         extractCategories();
         isLoading = false;
       });
@@ -135,13 +135,13 @@ class _HomePageState extends State<HomePage> {
 
     categories = set.toList();
 
-    /// 🔥 SORT BIAR URUT
+    // SORT
     categories.sort(
       (a, b) =>
           validCategories.indexOf(a).compareTo(validCategories.indexOf(b)),
     );
 
-    /// 🔥 kalau kurang dari 4, tambahin manual
+    //
     while (categories.length < 4) {
       for (var cat in validCategories) {
         if (!categories.contains(cat)) {
@@ -174,7 +174,7 @@ class _HomePageState extends State<HomePage> {
 
       body: SafeArea(
         child: SingleChildScrollView(
-          // 🔥 INI KUNCI
+          // 
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Column(
@@ -182,7 +182,7 @@ class _HomePageState extends State<HomePage> {
               children: [
                 const SizedBox(height: 30),
 
-                /// 🔹 HEADER
+                // HEADER
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -262,7 +262,7 @@ class _HomePageState extends State<HomePage> {
 
                 const SizedBox(height: 20),
 
-                /// 🔍 SEARCH
+                // SEARCH
                 Row(
                   children: [
                     Expanded(
@@ -294,7 +294,7 @@ class _HomePageState extends State<HomePage> {
 
                     const SizedBox(width: 10),
 
-                    /// 🤖 CHATBOT BUTTON
+                    //  CHATBOT BUTTON
                     GestureDetector(
                       onTap: () {
                         Navigator.push(
@@ -321,7 +321,7 @@ class _HomePageState extends State<HomePage> {
 
                 const SizedBox(height: 24),
 
-                /// 🔥 FOR YOU
+                // FOR YOU
                 Text(
                   "For You",
                   style: GoogleFonts.cormorantGaramond(
@@ -362,7 +362,7 @@ class _HomePageState extends State<HomePage> {
 
                 const SizedBox(height: 24),
 
-                /// 🔥 CATEGORIES
+                // CATEGORIES
                 Text(
                   "Categories",
                   style: GoogleFonts.cormorantGaramond(
@@ -374,8 +374,8 @@ class _HomePageState extends State<HomePage> {
                 const SizedBox(height: 16),
 
                 GridView.builder(
-                  shrinkWrap: true, // 🔥 penting
-                  physics: const NeverScrollableScrollPhysics(), // 🔥 penting
+                  shrinkWrap: true, 
+                  physics: const NeverScrollableScrollPhysics(), 
                   itemCount: categories.length,
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,

@@ -27,7 +27,7 @@ class _GamePageState extends State<GamePage> {
   void initState() {
     super.initState();
 
-    /// 🔥 SHAKE SENSOR
+    // SHAKE SENSOR
     shakeController.start(() {
       skipQuestion();
     });
@@ -41,7 +41,7 @@ class _GamePageState extends State<GamePage> {
     super.dispose();
   }
 
-  /// 🔥 SKIP VIA SHAKE
+  // SKIP VIA SHAKE
   void skipQuestion() {
     if (!isStarted || isFinished) return;
 
@@ -100,14 +100,14 @@ class _GamePageState extends State<GamePage> {
 
   @override
   Widget build(BuildContext context) {
-    /// 🔥 LOADING
+    // LOADING
     if (isLoading) {
       return const Scaffold(
         body: Center(child: CircularProgressIndicator()),
       );
     }
 
-    /// 🔥 START PAGE
+    // START PAGE
     if (!isStarted) {
       return Scaffold(
         backgroundColor: const Color(0xFFFBF9F4),
@@ -150,7 +150,7 @@ class _GamePageState extends State<GamePage> {
       );
     }
 
-    /// 🔥 END PAGE
+    // END PAGE
     if (isFinished) {
       return Scaffold(
         backgroundColor: const Color(0xFFFBF9F4),
@@ -198,7 +198,7 @@ class _GamePageState extends State<GamePage> {
       );
     }
 
-    /// 🔥 GAME PAGE
+    // GAME PAGE
     final q = questions[currentIndex];
 
     return Scaffold(
@@ -218,7 +218,7 @@ class _GamePageState extends State<GamePage> {
 
                 const SizedBox(height: 30),
 
-                /// IMAGE (FIX WIDTH)
+                // IMAGE 
                 Center(
                   child: Container(
                     constraints: const BoxConstraints(maxWidth: 300),
@@ -245,8 +245,8 @@ class _GamePageState extends State<GamePage> {
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(12),
                             child: Image.asset(
-                              q['image'], // 🔥 sekarang asset
-                              fit: BoxFit.contain, // ✅ TIDAK KE-CROP
+                              q['image'], 
+                              fit: BoxFit.contain, 
                             ),
                           ),
                         ),
@@ -257,7 +257,7 @@ class _GamePageState extends State<GamePage> {
 
                 const SizedBox(height: 20),
 
-                /// QUESTION
+                // QUESTION
                 Text(
                   q['question'],
                   textAlign: TextAlign.center,
@@ -269,7 +269,7 @@ class _GamePageState extends State<GamePage> {
 
                 const SizedBox(height: 20),
 
-                /// OPTIONS
+                // OPTIONS
                 Column(
                   children:
                       List.generate(q['options'].length, (index) {

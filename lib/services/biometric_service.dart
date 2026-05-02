@@ -16,8 +16,8 @@ class BiometricService {
       bool isAuthenticated = await auth.authenticate(
         localizedReason: 'Scan your fingerprint to login',
         options: const AuthenticationOptions(
-          biometricOnly: false, // 🔥 WAJIB FALSE
-          stickyAuth: true,     // 🔥 biar popup stabil
+          biometricOnly: false, 
+          stickyAuth: true,     
         ),
       );
 

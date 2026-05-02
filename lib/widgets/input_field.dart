@@ -42,7 +42,7 @@ class InputField extends StatelessWidget {
 
         const SizedBox(height: 6),
 
-        /// 🔹 INPUT
+        // INPUT
         TextFormField(
           controller: controller,
           textInputAction: textInputAction,
@@ -60,18 +60,18 @@ class InputField extends StatelessWidget {
               color: const Color(0xFF928C86),
             ),
 
-            /// 🔹 ICON (optional)
+            // ICON 
             suffixIcon: suffixIcon,
             suffixIconConstraints: const BoxConstraints(
               minWidth: 32,
               minHeight: 32,
             ),
 
-            /// 🔹 SPACING FIX (biar konsisten)
+            // SPACING 
             isDense: true,
             contentPadding: const EdgeInsets.symmetric(vertical: 10),
 
-            /// 🔹 BORDER STYLE
+            // BORDER 
             enabledBorder: const UnderlineInputBorder(
               borderSide: BorderSide(color: Color(0xFF8C867F)),
             ),
@@ -85,7 +85,7 @@ class InputField extends StatelessWidget {
               borderSide: BorderSide(color: Color(0xFFB45A4B), width: 1.4),
             ),
 
-            /// 🔹 ERROR TEXT
+            // ERROR TEXT
             errorStyle: GoogleFonts.inter(
               fontSize: 10,
               color: const Color(0xFFB45A4B),

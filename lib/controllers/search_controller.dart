@@ -1,5 +1,5 @@
 class SearchController {
-  /// 🔥 interpretasi query (LLM sederhana)
+  /// interpretasi query (Rule Based)
   String interpretQuery(String query) {
     query = query.toLowerCase();
 
@@ -13,7 +13,7 @@ class SearchController {
     return query;
   }
 
-  /// 🔥 ML similarity
+  // ML similarity
   double similarity(String query, String text) {
     final qWords = query.split(" ");
     final t = text.toLowerCase();
@@ -27,7 +27,7 @@ class SearchController {
     return match / qWords.length;
   }
 
-  /// 🔥 SEARCH FINAL
+  // SEARCH FINAL
   List<Map<String, dynamic>> search(
     String query,
     List<Map<String, dynamic>> data,

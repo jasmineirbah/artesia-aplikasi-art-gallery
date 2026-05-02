@@ -44,7 +44,7 @@ class ArtCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            /// 🔥 BOX PUTIH (KHUSUS GAMBAR)
+            // BOX PUTIH (KHUSUS GAMBAR)
             Stack(
               children: [
                 Container(
@@ -80,7 +80,7 @@ class ArtCard extends StatelessWidget {
                         ),
                 ),
 
-                /// ❤️ LOVE BUTTON
+                // LOVE BUTTON
                 Positioned(
                   top: 10,
                   right: 10,

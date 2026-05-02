@@ -10,7 +10,6 @@ class SessionService {
     await prefs.setString(_userKey, username);
   }
 
-  /// 🔥 TAMBAH INI (YANG HILANG)
   Future<String?> getUser() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString(_userKey);
@@ -24,6 +23,6 @@ class SessionService {
   Future<void> clear() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(_userKey);
-    await prefs.remove(_userIdKey); // 🔥 sekalian benerin
+    await prefs.remove(_userIdKey); 
   }
 }

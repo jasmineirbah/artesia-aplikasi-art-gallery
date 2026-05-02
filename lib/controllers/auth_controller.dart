@@ -12,7 +12,7 @@ class AuthController {
   final BiometricService _biometricService = BiometricService();
   final SessionService _sessionService = SessionService();
 
-  // ================= VALIDATION =================
+  // VALIDATION 
 
   String? validateFullName(String? value) {
     final name = value?.trim() ?? '';
@@ -35,7 +35,7 @@ class AuthController {
     return null;
   }
 
-  // ================= BIOMETRIC =================
+  // BIOMETRIC 
 
   Future<bool> loginWithBiometric() async {
     final user = await _sessionService.getUser();
@@ -44,7 +44,7 @@ class AuthController {
     return await _biometricService.authenticate();
   }
 
-  // ================= REGISTER =================
+  // REGISTER 
 
   Future<AuthResult> register({
     required String fullName,
@@ -75,7 +75,7 @@ class AuthController {
     }
   }
 
-  // ================= LOGIN =================
+  // LOGIN 
 
   Future<AuthResult> login({
     required String fullName,
@@ -106,7 +106,7 @@ class AuthController {
         );
       }
 
-      /// 🔥 SAVE SESSION
+      // SAVE SESSION
       await _sessionService.saveUser(user.id!, user.fullName);
 
       return AuthResult.success('Login berhasil.', user);
@@ -115,14 +115,14 @@ class AuthController {
     }
   }
 
-  // ================= PROFILE =================
+  // PROFILE 
 
   Future<void> updateProfileImage(int userId, String path) async {
     await _databaseService.updateProfileImage(userId, path);
   }
 }
 
-// ================= RESULT CLASS =================
+// RESULT CLASS 
 
 class AuthResult {
   const AuthResult._({

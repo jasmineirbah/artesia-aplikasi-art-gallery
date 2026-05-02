@@ -49,7 +49,7 @@ class _ChatbotPageState extends State<ChatbotPage> {
 
     final response = await chatbot.getResponse(text);
 
-    /// 🔥 PAKAI PREFIX
+    // PREFIX
     final results = searchController.search(text, artworks);
 
     setState(() {
@@ -72,7 +72,7 @@ class _ChatbotPageState extends State<ChatbotPage> {
     return Scaffold(
       backgroundColor: const Color(0xFFFBF9F4),
 
-      /// 🔥 APP BAR
+      // APP BAR
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -100,7 +100,7 @@ class _ChatbotPageState extends State<ChatbotPage> {
         ),
       ),
 
-      /// 🔥 BODY
+      // BODY
       body: Column(
         children: [
           /// 💬 CHAT AREA
@@ -142,7 +142,7 @@ class _ChatbotPageState extends State<ChatbotPage> {
                   );
                 }
 
-                /// 🔥 ARTWORK MESSAGE
+                // ARTWORK MESSAGE
                 if (msg["role"] == "artwork") {
                   final List arts = msg["data"] as List;
 
@@ -180,7 +180,7 @@ class _ChatbotPageState extends State<ChatbotPage> {
             ),
           ),
 
-          /// ✏️ INPUT AREA
+          // INPUT AREA
           SafeArea(
             top: false,
             child: Padding(

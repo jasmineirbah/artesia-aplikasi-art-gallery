@@ -18,7 +18,7 @@ class GalleryAccent extends StatelessWidget {
       child: Stack(
         clipBehavior: Clip.none,
         children: [
-          /// 🔹 Kotak kiri bawah
+          // Kotak kiri bawah
           Positioned(
             left: 0,
             bottom: 0,
@@ -29,7 +29,7 @@ class GalleryAccent extends StatelessWidget {
             ),
           ),
 
-          /// 🔹 Shape tengah (curve)
+          // Shape tengah (curve)
           Positioned(
             left: width * 0.18,
             bottom: 0,
@@ -45,7 +45,7 @@ class GalleryAccent extends StatelessWidget {
             ),
           ),
 
-          /// 🔹 Shape kanan tinggi
+          // Shape kanan tinggi
           Positioned(
             right: width * 0.1,
             bottom: 0,
@@ -61,7 +61,7 @@ class GalleryAccent extends StatelessWidget {
             ),
           ),
 
-          /// 🔹 Kotak kecil depan
+          // Kotak kecil depan
           Positioned(
             left: 0,
             bottom: 0,

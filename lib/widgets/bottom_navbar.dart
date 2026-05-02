@@ -20,14 +20,12 @@ class CustomBottomNavbar extends StatelessWidget {
 
       backgroundColor: Colors.white,
 
-      /// 🔥 FORCE WARNA
       selectedItemColor: Colors.black,
       unselectedItemColor: Colors.grey,
 
       selectedIconTheme: const IconThemeData(color: Colors.black),
       unselectedIconTheme: const IconThemeData(color: Colors.grey),
 
-      /// 🔥 MATIKAN EFFECT MATERIAL 3
       enableFeedback: false,
 
       selectedFontSize: 12,
@@ -36,7 +34,7 @@ class CustomBottomNavbar extends StatelessWidget {
       selectedLabelStyle: GoogleFonts.inter(
         fontSize: 12,
         fontWeight: FontWeight.w600,
-        color: Colors.black, // 🔥 paksa warna text
+        color: Colors.black, 
       ),
       unselectedLabelStyle: GoogleFonts.inter(
         fontSize: 11,

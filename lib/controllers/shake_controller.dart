@@ -9,7 +9,7 @@ class ShakeController {
     _service.onShake = () {
       final now = DateTime.now();
 
-      /// 🔥 anti spam
+      // anti spam
       if (now.difference(lastShake).inMilliseconds < 800) return;
 
       lastShake = now;

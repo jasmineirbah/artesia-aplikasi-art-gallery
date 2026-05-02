@@ -3,7 +3,7 @@ import '../services/time_service.dart';
 class TimeController {
   final TimeService _service = TimeService();
 
-  /// 🔥 MAP CULTURE → TIMEZONE
+  /// MAP CULTURE → TIMEZONE
   String mapCultureToTimezone(String? culture) {
     if (culture == null || culture.isEmpty) {
       return "Asia/Jakarta"; // default
@@ -23,17 +23,16 @@ class TimeController {
     if (c.contains("spain")) return "Europe/Madrid";
     if (c.contains("usa") || c.contains("american")) return "America/New_York";
 
-    /// 🔥 fallback kalau ga ketemu
+    // fallback kalau ga ketemu
     return "Asia/Jakarta";
   }
 
-  /// 🔥 AMBIL 1 WAKTU SESUAI CULTURE
+  // AMBIL 1 WAKTU SESUAI CULTURE
   Future<String> getTimeByCulture(String? culture) async {
     final timezone = mapCultureToTimezone(culture);
     return await _service.getTime(timezone);
   }
 
-  /// 🔥 OPTIONAL (kalau kamu masih mau multi timezone)
   Future<Map<String, String>> getAllTimes() async {
     final zones = {
       "WIB": "Asia/Jakarta",

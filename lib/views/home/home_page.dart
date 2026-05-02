@@ -1,4 +1,5 @@
 import 'package:artesia_aplikasi_art_gallery/views/categories/category_page.dart';
+import 'package:artesia_aplikasi_art_gallery/views/chatbot/chatbot_page.dart';
 import 'package:artesia_aplikasi_art_gallery/views/favorites/favorite_page.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -6,7 +7,7 @@ import 'package:artesia_aplikasi_art_gallery/services/api_service.dart';
 import 'package:artesia_aplikasi_art_gallery/widgets/art_card.dart';
 import 'package:artesia_aplikasi_art_gallery/services/database_service.dart';
 import 'package:artesia_aplikasi_art_gallery/services/notification_service.dart';
-import 'package:artesia_aplikasi_art_gallery/controllers/search_controller.dart';
+import 'package:artesia_aplikasi_art_gallery/controllers/search_controller.dart' as search;
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -18,7 +19,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final ApiService _apiService = ApiService();
 
-  final SearchController searchController = SearchController();
+  final search.SearchController searchController = search.SearchController();
   List<Map<String, dynamic>> filteredArtworks = [];
 
   List<Map<String, dynamic>> artworks = [];
@@ -244,23 +245,21 @@ class _HomePageState extends State<HomePage> {
                       child: TextField(
                         onChanged: onSearch,
                         style: GoogleFonts.inter(
-                          fontSize: 13, // 🔥 isi text
+                          fontSize: 13,
                           color: Colors.black,
                         ),
                         decoration: InputDecoration(
                           hintText: "Search Painting",
                           hintStyle: GoogleFonts.inter(
-                            fontSize: 13, // 🔥 samain dengan input login
+                            fontSize: 13,
                             color: Colors.grey,
                           ),
                           prefixIcon: const Icon(Icons.search, size: 18),
                           filled: true,
                           fillColor: Colors.white,
-
                           contentPadding: const EdgeInsets.symmetric(
-                            vertical: 14, // 🔥 biar ga gepeng
+                            vertical: 14,
                           ),
-
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(20),
                             borderSide: BorderSide.none,
@@ -271,13 +270,27 @@ class _HomePageState extends State<HomePage> {
 
                     const SizedBox(width: 10),
 
-                    Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(20),
+                    /// 🤖 CHATBOT BUTTON
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const ChatbotPage(),
+                          ),
+                        );
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: const Icon(
+                          Icons.smart_toy_outlined,
+                          size: 20,
+                        ),
                       ),
-                      child: const Icon(Icons.notifications_none),
                     ),
                   ],
                 ),

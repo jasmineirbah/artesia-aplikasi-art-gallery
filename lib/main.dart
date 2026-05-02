@@ -4,11 +4,14 @@ import 'services/notification_service.dart';
 import 'services/session_service.dart';
 import 'views/auth/login_page.dart';
 import 'views/main/main_page.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: ".env");
   await NotificationService.instance.initialize();
   runApp(const MyApp());
+  print("ENV KEY: ${dotenv.env['GEMINI_API_KEY']}");
 }
 
 class MyApp extends StatelessWidget {

@@ -1,4 +1,5 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'notification_preference.dart';
 
 class NotificationService {
   NotificationService._();
@@ -59,7 +60,7 @@ class NotificationService {
     if (!_initialized) {
       await initialize();
     }
-
+    if (!await NotificationPreference.isEnabled()) return;
     await _requestPermissions();
 
     final androidDetails = AndroidNotificationDetails(

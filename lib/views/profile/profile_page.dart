@@ -1,6 +1,7 @@
 // lib/views/profile/profile_page.dart
 
 import 'dart:io';
+import 'package:artesia_aplikasi_art_gallery/services/notification_preference.dart';
 import 'package:artesia_aplikasi_art_gallery/utils/hash_helper.dart';
 import 'package:artesia_aplikasi_art_gallery/widgets/input_field.dart';
 import 'package:flutter/material.dart';
@@ -30,11 +31,20 @@ class _ProfilePageState extends State<ProfilePage> {
   int? userId;
   bool isPasswordVisible = false;
   String tempPassword = "••••••••";
+  bool isNotificationEnabled = true;
 
   @override
   void initState() {
     super.initState();
     loadUser();
+    loadNotification();
+  }
+
+  void loadNotification() async {
+    final value = await NotificationPreference.isEnabled();
+    setState(() {
+      isNotificationEnabled = value;
+    });
   }
 
   void loadUser() async {
@@ -396,6 +406,46 @@ class _ProfilePageState extends State<ProfilePage> {
                     )
                   ],
                 ),
+              ),
+            ),
+
+            const SizedBox(height: 10),
+
+            Container(
+              padding: const EdgeInsets.symmetric(vertical: 4),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      "Notifications",
+                      style: GoogleFonts.cormorantGaramond(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                  ),
+
+                  IconButton(
+                    icon: Icon(
+                      isNotificationEnabled
+                          ? Icons.toggle_on
+                          : Icons.toggle_off,
+                      size: 45,
+                      color: isNotificationEnabled
+                          ? Colors.green
+                          : Colors.grey,
+                    ),
+                    onPressed: () async {
+                      final newValue = !isNotificationEnabled;
+
+                      await NotificationPreference.setEnabled(newValue);
+
+                      setState(() {
+                        isNotificationEnabled = newValue;
+                      });
+                    },
+                  ),
+                ],
               ),
             ),
 

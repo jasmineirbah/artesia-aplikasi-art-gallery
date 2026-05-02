@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:artesia_aplikasi_art_gallery/controllers/currency_controller.dart';
 import 'package:artesia_aplikasi_art_gallery/controllers/time_controller.dart';
+import 'package:artesia_aplikasi_art_gallery/services/time_service.dart';
 import 'package:artesia_aplikasi_art_gallery/widgets/app_logo.dart';
 import 'package:artesia_aplikasi_art_gallery/widgets/primary_button.dart';
 import 'package:flutter/material.dart';
@@ -28,6 +29,8 @@ class _DetailPageState extends State<DetailPage> {
   double convertedPrice = 0;
   String jakartaTime = "--:--";
   final SensorController sensorController = SensorController();
+
+  final TimeService timeService = TimeService();
 
   double parsePrice(String price) {
     final cleaned = price
@@ -84,12 +87,14 @@ class _DetailPageState extends State<DetailPage> {
   }
 
   void loadTime() async {
-    final culture = widget.art['location']; // ini culture kamu
+    final culture = widget.art['location'];
 
     final result = await timeController.getTimeByCulture(culture);
+    final worldTimes = await timeService.getWorldTimes();
 
     setState(() {
       currentTime = result;
+      times = worldTimes;
     });
   }
   
@@ -109,28 +114,14 @@ class _DetailPageState extends State<DetailPage> {
     super.dispose();
   }
 
-  /// 🌍 TIME API
-  Future<void> getTime() async {
-    try {
-      final res = await http.get(
-        Uri.parse('http://worldtimeapi.org/api/timezone/Asia/Jakarta'),
-      );
-
-      final data = jsonDecode(res.body);
-
-      final datetime = data['datetime'];
-      final time = datetime.substring(11, 16);
-
-      setState(() {
-        jakartaTime = time;
-      });
-    } catch (e) {
-      jakartaTime = "--:--";
-    }
-  }
-
   /// 📍 POPUP LOCATION
-  void showLocationPopup() {
+  void showLocationPopup() async {
+    final worldTimes = await timeService.getWorldTimes();
+
+    setState(() {
+      times = worldTimes;
+    });
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -220,18 +211,7 @@ class _DetailPageState extends State<DetailPage> {
                 }).toList(),
               ),
 
-              const SizedBox(height: 20),
-
-              /// 🔥 PRIMARY BUTTON
-              SizedBox(
-                width: double.infinity,
-                child: PrimaryButton(
-                  text: "Open in Maps",
-                  onPressed: () {},
-                ),
-              ),
-
-              const SizedBox(height: 10),
+              const SizedBox(height: 50),
             ],
           ),
         );

@@ -168,7 +168,7 @@ class _GamePageState extends State<GamePage> {
               const SizedBox(height: 10),
               Text(
                 "Score: $score / ${questions.length}",
-                style: GoogleFonts.inter(fontSize: 18),
+                style: GoogleFonts.inter(fontSize: 14),
               ),
               const SizedBox(height: 20),
               ElevatedButton(
@@ -224,15 +224,29 @@ class _GamePageState extends State<GamePage> {
                     constraints: const BoxConstraints(maxWidth: 300),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(12),
-                      child: AspectRatio(
-                        aspectRatio: 16 / 9,
-                        child: Image.network(
-                          q['image'],
-                          fit: BoxFit.cover,
-                          errorBuilder: (_, __, ___) => Container(
-                            color: Colors.grey[200],
-                            child: const Center(
-                              child: Icon(Icons.broken_image),
+                      child: Center(
+                        child: Container(
+                          constraints: const BoxConstraints(
+                            maxWidth: 300,
+                            maxHeight: 260,
+                          ),
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(16),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.06),
+                                blurRadius: 10,
+                                offset: Offset(0, 4),
+                              ),
+                            ],
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(12),
+                            child: Image.asset(
+                              q['image'], // 🔥 sekarang asset
+                              fit: BoxFit.contain, // ✅ TIDAK KE-CROP
                             ),
                           ),
                         ),

@@ -1,4 +1,4 @@
-import 'dart:convert';
+//import 'dart:convert';
 import 'package:artesia_aplikasi_art_gallery/controllers/currency_controller.dart';
 import 'package:artesia_aplikasi_art_gallery/controllers/time_controller.dart';
 import 'package:artesia_aplikasi_art_gallery/services/time_service.dart';
@@ -6,7 +6,7 @@ import 'package:artesia_aplikasi_art_gallery/widgets/app_logo.dart';
 import 'package:artesia_aplikasi_art_gallery/widgets/primary_button.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:http/http.dart' as http;
+//import 'package:http/http.dart' as http;
 import '../../controllers/sensor_controller.dart';
 
 class DetailPage extends StatefulWidget {

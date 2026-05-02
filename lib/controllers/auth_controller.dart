@@ -107,7 +107,7 @@ class AuthController {
       }
 
       /// 🔥 SAVE SESSION
-      await _sessionService.saveUser(user.fullName);
+      await _sessionService.saveUser(user.id!, user.fullName);
 
       return AuthResult.success('Login berhasil.', user);
     } catch (_) {

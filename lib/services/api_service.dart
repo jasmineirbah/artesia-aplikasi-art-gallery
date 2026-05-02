@@ -20,7 +20,7 @@ class ApiService {
       final List ids = searchData['objectIDs'] ?? [];
 
       /// 🔥 ambil maksimal 10 biar ga berat
-      final limitedIds = ids.take(30).toList();
+      final limitedIds = ids.take(50).toList();
 
       List<Map<String, dynamic>> artworks = [];
 

@@ -159,7 +159,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   newName,
                 );
 
-                await SessionService().saveUser(newName);
+                await SessionService().saveUser(userId!, newName);
 
                 setState(() {
                   username = newName;
@@ -489,36 +489,15 @@ class _ProfilePageState extends State<ProfilePage> {
         text: isPasswordVisible ? tempPassword : "••••••••",
       ),
       label: 'PASSWORD',
-      hintText: '', // 🔥 TAMBAH DI SINI
+      hintText: '',
       readOnly: true,
-      obscureText: !isPasswordVisible,
+      obscureText: true,
 
-      suffixIcon: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          IconButton(
-            padding: EdgeInsets.zero,
-            constraints: const BoxConstraints(),
-            icon: Icon(
-              isPasswordVisible
-                  ? Icons.visibility_outlined
-                  : Icons.visibility_off_outlined,
-              size: 16,
-            ),
-            onPressed: () {
-              setState(() {
-                isPasswordVisible = !isPasswordVisible;
-              });
-            },
-          ),
-          const SizedBox(width: 4),
-          IconButton(
-            padding: EdgeInsets.zero,
-            constraints: const BoxConstraints(),
-            icon: const Icon(Icons.edit, size: 16),
-            onPressed: showChangePasswordDialog,
-          ),
-        ],
+      suffixIcon: IconButton(
+        padding: EdgeInsets.zero,
+        constraints: const BoxConstraints(),
+        icon: const Icon(Icons.edit, size: 16),
+        onPressed: showChangePasswordDialog,
       ),
     );
   }

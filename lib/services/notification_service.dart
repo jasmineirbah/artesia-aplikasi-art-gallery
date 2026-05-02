@@ -98,8 +98,4 @@ class NotificationService {
       payload: artworkTitle,
     );
   }
-
-  void _onNotificationTap(NotificationResponse response) {
-    print("Notif diklik: ${response.payload}");
-  }
 }

@@ -1,3 +1,4 @@
+import 'package:artesia_aplikasi_art_gallery/services/session_service.dart';
 import 'package:artesia_aplikasi_art_gallery/views/categories/category_page.dart';
 import 'package:artesia_aplikasi_art_gallery/views/chatbot/chatbot_page.dart';
 import 'package:artesia_aplikasi_art_gallery/views/favorites/favorite_page.dart';
@@ -35,12 +36,35 @@ class _HomePageState extends State<HomePage> {
     "Sculpture",
   ];
   
+  String getCategoryImage(String category) {
+    switch (category) {
+      case "Paintings":
+        return "assets/images/painting.jpg";
+      case "Prints":
+        return "assets/images/printing.jpg";
+      case "Sculpture":
+        return "assets/images/sculpture.jpg"; 
+      case "Drawings":
+        return "assets/images/drawing.jpg";
+      default:
+        return "assets/images/others.jpg";
+    }
+  }
 
   @override
   void initState() {
     super.initState();
 
-    userId = 1; // 🔥 sementara (nanti bisa dari login)
+    initUser();
+  }
+
+  Future<void> initUser() async {
+    final id = await SessionService().getUserId();
+
+    setState(() {
+      userId = id ?? 0;
+    });
+
     fetchData();
     loadFavorites();
   }
@@ -379,16 +403,29 @@ class _HomePageState extends State<HomePage> {
                         }
                       },
                       child: Container(
-                        color: Colors.grey[300],
-                        child: Center(
-                          child: Text(
-                            category,
-                            style: GoogleFonts.inter(
-                              fontWeight: FontWeight.w600,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          image: DecorationImage(
+                            image: AssetImage(getCategoryImage(category)),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(12),
+                            color: Colors.black.withOpacity(0.3), // biar text kebaca
+                          ),
+                          child: Center(
+                            child: Text(
+                              category,
+                              style: GoogleFonts.inter(
+                                fontWeight: FontWeight.w600,
+                                color: Colors.white,
+                              ),
                             ),
                           ),
                         ),
-                      ),
+                      )
                     );
                   },
                 ),

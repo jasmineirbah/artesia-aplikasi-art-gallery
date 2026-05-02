@@ -31,6 +31,27 @@ class _NearbyGallerySheetState extends State<NearbyGallerySheet> {
     setState(() {});
   }
 
+  /// 🔥 HANDLE IMAGE (NETWORK + ASSET)
+  Widget buildImage(String image) {
+    if (image.startsWith('http')) {
+      return Image.network(
+        image,
+        width: 60,
+        height: 60,
+        fit: BoxFit.cover,
+        errorBuilder: (_, __, ___) =>
+            const Icon(Icons.broken_image, size: 30),
+      );
+    } else {
+      return Image.asset(
+        image,
+        width: 60,
+        height: 60,
+        fit: BoxFit.cover,
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -58,27 +79,27 @@ class _NearbyGallerySheetState extends State<NearbyGallerySheet> {
                   ),
                 ),
 
+                /// TITLE
                 Center(
                   child: Column(
                     children: [
                       Text(
                         "Nearby Galleries",
                         style: GoogleFonts.cormorantGaramond(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w600,
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
 
-                      const SizedBox(height: 14),
+                      const SizedBox(height: 10),
 
-                      /// 🔥 ICON MAP
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.location_on, size: 16),
-                          SizedBox(width: 4),
+                          const Icon(Icons.location_on, size: 16),
+                          const SizedBox(width: 4),
                           Text(
-                            "Within 50 km",
+                            "Within 25 km",
                             style: GoogleFonts.inter(fontSize: 12),
                           ),
                         ],
@@ -87,7 +108,7 @@ class _NearbyGallerySheetState extends State<NearbyGallerySheet> {
                   ),
                 ),
 
-                const SizedBox(height: 16),
+                const SizedBox(height: 20),
 
                 /// LIST
                 Expanded(
@@ -104,42 +125,57 @@ class _NearbyGallerySheetState extends State<NearbyGallerySheet> {
                       );
 
                       return Padding(
-                        padding: const EdgeInsets.only(bottom: 16),
-                        child: Row(
-                          children: [
-                            /// IMAGE
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(8),
-                              child: Image.network(
-                                g["image"],
-                                width: 70,
-                                height: 70,
-                                fit: BoxFit.cover,
+                        padding: const EdgeInsets.only(bottom: 14),
+                        child: Container(
+                          padding: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(14),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.05),
+                                blurRadius: 8,
+                                offset: const Offset(0, 4),
                               ),
-                            ),
+                            ],
+                          ),
+                          child: Row(
+                            children: [
+                              /// IMAGE
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(10),
+                                child: buildImage(g["image"]),
+                              ),
 
-                            const SizedBox(width: 12),
+                              const SizedBox(width: 12),
 
-                            /// TEXT
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    g["name"],
-                                    overflow: TextOverflow.ellipsis,
-                                    style: GoogleFonts.inter(
-                                      fontWeight: FontWeight.w600,
+                              /// TEXT
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      g["name"],
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: GoogleFonts.inter(
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 14,
+                                      ),
                                     ),
-                                  ),
-                                  Text(
-                                    "${distance.toStringAsFixed(1)} km away",
-                                    style: GoogleFonts.inter(color: Colors.grey),
-                                  ),
-                                ],
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      "${distance.toStringAsFixed(1)} km away",
+                                      style: GoogleFonts.inter(
+                                        fontSize: 12,
+                                        color: Colors.grey,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       );
                     },

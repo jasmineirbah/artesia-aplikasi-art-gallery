@@ -16,20 +16,32 @@ class CustomBottomNavbar extends StatelessWidget {
     return BottomNavigationBar(
       currentIndex: currentIndex,
       onTap: onTap,
-      selectedItemColor: Colors.black,
-      unselectedItemColor: Colors.grey,
-      selectedFontSize: 12,
-      unselectedFontSize: 11,
       type: BottomNavigationBarType.fixed,
 
-      // 🔥 TAMBAH INI
+      backgroundColor: Colors.white,
+
+      /// 🔥 FORCE WARNA
+      selectedItemColor: Colors.black,
+      unselectedItemColor: Colors.grey,
+
+      selectedIconTheme: const IconThemeData(color: Colors.black),
+      unselectedIconTheme: const IconThemeData(color: Colors.grey),
+
+      /// 🔥 MATIKAN EFFECT MATERIAL 3
+      enableFeedback: false,
+
+      selectedFontSize: 12,
+      unselectedFontSize: 11,
+
       selectedLabelStyle: GoogleFonts.inter(
         fontSize: 12,
         fontWeight: FontWeight.w600,
+        color: Colors.black, // 🔥 paksa warna text
       ),
       unselectedLabelStyle: GoogleFonts.inter(
         fontSize: 11,
         fontWeight: FontWeight.w400,
+        color: Colors.grey,
       ),
 
       items: const [

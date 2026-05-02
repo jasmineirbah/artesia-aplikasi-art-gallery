@@ -1,3 +1,4 @@
+import 'package:artesia_aplikasi_art_gallery/views/inbox/inbox_page.dart';
 import 'package:flutter/material.dart';
 import 'package:artesia_aplikasi_art_gallery/views/home/home_page.dart';
 import 'package:artesia_aplikasi_art_gallery/views/game/game_page.dart';
@@ -17,7 +18,7 @@ class _MainPageState extends State<MainPage> {
   final List<Widget> pages = [
     const HomePage(),
     const GamePage(),
-    const Center(child: Text("Inbox Page")),
+    const KesanPesanPage(),
     const ProfilePage(),
   ];
 

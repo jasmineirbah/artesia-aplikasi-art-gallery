@@ -20,17 +20,26 @@ class AppLogo extends StatelessWidget {
       child: Stack(
         alignment: Alignment.center,
         children: [
+          
           /// 🔹 Back Button (optional)
           if (showBackButton)
-            Align(
-              alignment: Alignment.centerLeft,
-              child: IconButton(
-                onPressed: () => Navigator.of(context).pop(),
-                icon: const Icon(Icons.arrow_back, size: 18),
-                padding: EdgeInsets.zero,
-                constraints: const BoxConstraints(),
-              ),
+          Padding(
+            padding: const EdgeInsets.only(top: 4), // 🔥 ini untuk TOP
+            child: Row(
+              children: [
+                const SizedBox(width: 10), // 🔥 ini untuk LEFT
+                IconButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  icon: const Icon(
+                    Icons.arrow_back_ios_new,
+                    size: 16,
+                  ),
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(),
+                ),
+              ],
             ),
+          ),
 
           /// 🔹 Logo Text
           Text(

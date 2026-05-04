@@ -1,3 +1,4 @@
+import 'package:artesia_aplikasi_art_gallery/widgets/custom_back_button.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../controllers/chatbot_controller.dart';
@@ -79,10 +80,7 @@ class _ChatbotPageState extends State<ChatbotPage> {
         centerTitle: true,
         toolbarHeight: 100,
 
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () => Navigator.pop(context),
-        ),
+        leading: const CustomBackButton(),
 
         title: Column(
           mainAxisSize: MainAxisSize.min,

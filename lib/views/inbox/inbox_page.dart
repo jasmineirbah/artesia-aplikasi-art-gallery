@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:artesia_aplikasi_art_gallery/widgets/app_logo.dart';
 
 class KesanPesanPage extends StatelessWidget {
   const KesanPesanPage({super.key});
@@ -7,100 +8,102 @@ class KesanPesanPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFFF5F5F7),
+
+      // APPBAR
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        surfaceTintColor: Colors.transparent,
+        centerTitle: true,
+        toolbarHeight: 100,
+        title: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const AppLogo(showBackButton: false),
+            const SizedBox(height: 6),
+            Text(
+              "Kesan & Pesan",
+              style: GoogleFonts.cormorantGaramond(
+                fontSize: 26,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+      ),
+
+      // BODY
       body: Stack(
         children: [
-          /// 🖼️ BACKGROUND
+          /// 🎨 BACKGROUND FULL (NO BLUR)
           Positioned.fill(
             child: Image.asset(
-              "assets/images/monet.jpg",
+              "assets/images/star.jpg",
               fit: BoxFit.cover,
-              filterQuality: FilterQuality.high,
             ),
-          ),
-
-          /// 🌫️ OVERLAY TIPIS (BIAR ELEGAN)
-          Container(
-            color: Colors.black.withOpacity(0.25),
           ),
 
           // CONTENT
           SafeArea(
-            child: Center(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: Column(
+                children: [
+                  const SizedBox(height: 46),
 
-                // GLASS CARD 
-                child: Container(
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.30), 
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(
-                      color: Colors.white.withOpacity(0.2),
-                    ),
+                  _buildCard(
+                    title: "Kesan",
+                    content:
+                        "Mata kuliah TPM sangat seru dan berkesan karena memberi pengalaman dalam membuat aplikasi mobile dari awal.\n\nMulai dari perancangan tampilan hingga aplikasi dapat berjalan, prosesnya cukup menantang tetapi tetap menyenangkan.",
                   ),
 
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      /// TITLE
-                      Text(
-                        "Kesan & Pesan",
-                        style: GoogleFonts.cormorantGaramond(
-                          fontSize: 28,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                      ),
+                  const SizedBox(height: 18),
 
-                      const SizedBox(height: 20),
-
-                      /// KESAN
-                      Text(
-                        "Kesan",
-                        style: GoogleFonts.inter(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w800,
-                          color: Colors.white,
-                        ),
-                      ),
-                      const SizedBox(height: 6),
-                      Text(
-                        "Mata kuliah TPM sangat seru dan berkesan karena memberi pengalaman dalam membuat aplikasi mobile dari awal. Mulai dari perancangan tampilan sampai aplikasi dapat berjalan, prosesnya cukup menantang tapi juga menyenangkan.",
-                        style: GoogleFonts.inter(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w700,
-                          height: 1.6,
-                          color: const Color.fromARGB(255, 255, 255, 255),
-                        ),
-                      ),
-
-                      const SizedBox(height: 16),
-
-                      /// PESAN
-                      Text(
-                        "Pesan",
-                        style: GoogleFonts.inter(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w800,
-                          color: Colors.white,
-                        ),
-                      ),
-                      const SizedBox(height: 6),
-                      Text(
-                        "Semoga ke depannya materi yang diberikan dapat terus memberi manfaat bagi mahasiswa angkatan selanjutnya.",
-                        style: GoogleFonts.inter(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w700,
-                          height: 1.6,
-                          color: const Color.fromARGB(255, 255, 255, 255),
-                        ),
-                      ),
-                    ],
+                  _buildCard(
+                    title: "Pesan",
+                    content:
+                        "Semoga kedepannya materi yang diberikan dapat terus memberi manfaat bagi mahasiswa angkatan selanjutnya.",
                   ),
-                ),
+                ],
               ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // CARD 
+  Widget _buildCard({
+    required String title,
+    required String content,
+  }) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.85),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: GoogleFonts.cormorantGaramond(
+              fontSize: 20,
+              fontWeight: FontWeight.w800,
+              color: const Color.fromARGB(255, 0, 0, 0),
+            ),
+          ),
+          const SizedBox(height: 10),
+          Text(
+            content,
+            style: GoogleFonts.inter(
+              fontSize: 13,
+              height: 1.7,
+              color: Colors.black87,
             ),
           ),
         ],

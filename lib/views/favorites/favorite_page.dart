@@ -2,6 +2,7 @@ import 'package:artesia_aplikasi_art_gallery/services/database_service.dart';
 import 'package:artesia_aplikasi_art_gallery/services/notification_service.dart';
 import 'package:artesia_aplikasi_art_gallery/widgets/app_logo.dart';
 import 'package:artesia_aplikasi_art_gallery/widgets/art_card.dart';
+import 'package:artesia_aplikasi_art_gallery/widgets/custom_back_button.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -67,6 +68,9 @@ class _FavoritePageState extends State<FavoritePage> {
         elevation: 0,
         centerTitle: true,
         toolbarHeight: 100,
+
+        leading: const CustomBackButton(),
+
         title: Column(
           mainAxisSize: MainAxisSize.min,
           children: [

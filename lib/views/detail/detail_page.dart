@@ -3,6 +3,7 @@ import 'package:artesia_aplikasi_art_gallery/controllers/currency_controller.dar
 import 'package:artesia_aplikasi_art_gallery/controllers/time_controller.dart';
 import 'package:artesia_aplikasi_art_gallery/services/time_service.dart';
 import 'package:artesia_aplikasi_art_gallery/widgets/app_logo.dart';
+import 'package:artesia_aplikasi_art_gallery/widgets/custom_back_button.dart';
 import 'package:artesia_aplikasi_art_gallery/widgets/primary_button.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -231,10 +232,7 @@ class _DetailPageState extends State<DetailPage> {
         elevation: 0,
         centerTitle: true,
 
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () => Navigator.pop(context),
-        ),
+        leading: const CustomBackButton(),
 
         title: const AppLogo(),
       ),

@@ -1,5 +1,3 @@
-// lib/views/profile/profile_page.dart
-
 import 'dart:io';
 import 'package:artesia_aplikasi_art_gallery/services/notification_preference.dart';
 import 'package:artesia_aplikasi_art_gallery/utils/hash_helper.dart';
@@ -184,6 +182,97 @@ class _ProfilePageState extends State<ProfilePage> {
       },
     );
   }
+  void showNewPasswordDialog() {
+    final controller = TextEditingController();
+    bool isObscure = true;
+
+    showDialog(
+      context: context,
+      builder: (dialogContext) {
+        return StatefulBuilder(
+          builder: (context, setStateDialog) {
+            return AlertDialog(
+              backgroundColor: const Color(0xFFFBF9F4),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              title: Center(
+                child: Text(
+                  "New Password",
+                  style: GoogleFonts.inter(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+              content: TextField(
+                controller: controller,
+                obscureText: isObscure,
+                decoration: InputDecoration(
+                  hintText: "Enter new password",
+                  hintStyle: GoogleFonts.inter(
+                    fontSize: 13,
+                    color: Colors.grey[500],
+                  ),
+                  filled: true,
+                  fillColor: Colors.white,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide.none,
+                  ),
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      isObscure ? Icons.visibility_off : Icons.visibility,
+                      size: 18,
+                    ),
+                    onPressed: () {
+                      setStateDialog(() {
+                        isObscure = !isObscure;
+                      });
+                    },
+                  ),
+                ),
+              ),
+              actionsAlignment: MainAxisAlignment.center,
+              actions: [
+                TextButton(
+                  onPressed: () async {
+                    final newPass = controller.text.trim();
+
+                    if (newPass.length < 6) return;
+
+                    final hash = HashHelper.hashPassword(newPass);
+
+                    await DatabaseService.instance.updatePassword(
+                      userId!,
+                      hash,
+                    );
+
+                    setState(() {
+                      tempPassword = newPass;
+                    });
+
+                    Navigator.pop(dialogContext);
+
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text("Password updated.")),
+                    );
+                  },
+                  child: Text(
+                    "Save",
+                    style: GoogleFonts.inter(
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black,
+                    ),
+                  ),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
 
   void showChangePasswordDialog() {
     final controller = TextEditingController();
@@ -215,9 +304,9 @@ class _ProfilePageState extends State<ProfilePage> {
                   fontSize: 14, 
                 ),
                 decoration: InputDecoration(
-                  hintText: "Enter new password",
+                  hintText: "Enter old password",
                   hintStyle: GoogleFonts.inter(
-                    fontSize: 14,
+                    fontSize: 13,
                     color: Colors.grey[500],
                   ),
 
@@ -267,29 +356,27 @@ class _ProfilePageState extends State<ProfilePage> {
               actions: [
                 TextButton(
                   onPressed: () async {
-                    final newPass = controller.text.trim();
+                    final oldPass = controller.text.trim();
 
-                    if (newPass.length < 6) return;
+                    final user = await DatabaseService.instance.getUserById(userId!);
 
-                    final hash = HashHelper.hashPassword(newPass);
+                    if (user == null) return;
 
-                    await DatabaseService.instance.updatePassword(
-                      userId!,
-                      hash,
-                    );
+                    final oldHash = HashHelper.hashPassword(oldPass);
 
-                    setState(() {
-                      tempPassword = newPass;
-                    });
+                    if (oldHash != user['password_hash']) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text("Old password wrong.")),
+                      );
+                      return;
+                    }
 
-                    Navigator.pop(dialogContext); 
+                    Navigator.pop(dialogContext);
 
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text("Password updated.")),
-                    );
+                    showNewPasswordDialog();
                   },
                   child: Text(
-                    "Save",
+                    "Enter",
                     style: GoogleFonts.inter(
                       fontWeight: FontWeight.w500,
                       color: Colors.black,

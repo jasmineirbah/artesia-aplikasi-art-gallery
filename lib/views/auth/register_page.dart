@@ -79,7 +79,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
                             const SizedBox(height: 12),
-                            const AppLogo(showBackButton: true),
+                            const AppLogo(showBackButton: false),
                             const SizedBox(height: 58),
                             const Center(child: GalleryAccent()),
                             const SizedBox(height: 28),

@@ -47,14 +47,22 @@ class CustomBottomNavbar extends StatelessWidget {
           icon: Icon(Icons.home_filled),
           label: "Home",
         ),
+
+        BottomNavigationBarItem(
+          icon: Icon(Icons.casino_outlined),
+          label: "Surprise",
+        ),
+
+        BottomNavigationBarItem(
+          icon: Icon(Icons.mood_outlined),
+          label: "Mood",
+        ),
+
         BottomNavigationBarItem(
           icon: Icon(Icons.extension_outlined),
           label: "Game",
         ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.mail_outline),
-          label: "Inbox",
-        ),
+
         BottomNavigationBarItem(
           icon: Icon(Icons.person_outline),
           label: "Profile",

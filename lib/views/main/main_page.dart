@@ -4,6 +4,8 @@ import 'package:artesia_aplikasi_art_gallery/views/home/home_page.dart';
 import 'package:artesia_aplikasi_art_gallery/views/game/game_page.dart';
 import 'package:artesia_aplikasi_art_gallery/views/profile/profile_page.dart';
 import 'package:artesia_aplikasi_art_gallery/widgets/bottom_navbar.dart';
+import 'package:artesia_aplikasi_art_gallery/views/surprise/surprise_page.dart';
+import 'package:artesia_aplikasi_art_gallery/views/mood/mood_page.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -17,8 +19,9 @@ class _MainPageState extends State<MainPage> {
 
   final List<Widget> pages = [
     const HomePage(),
+    const SurprisePage(),
+    const MoodPage(),
     const GamePage(),
-    const KesanPesanPage(),
     const ProfilePage(),
   ];
 

@@ -34,7 +34,7 @@ class GeminiService {
         final data = jsonDecode(response.body);
         return data["candidates"][0]["content"]["parts"][0]["text"];
       } else {
-        return "Error: ${response.statusCode}";
+        return "Error ${response.statusCode}\n${response.body}";
       }
     } catch (e) {
       return "Gagal connect ke AI 😢";

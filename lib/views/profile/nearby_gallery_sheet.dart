@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'package:url_launcher/url_launcher.dart';
 import '../../services/location_service.dart';
 import '../../services/gallery_service.dart';
 
@@ -49,6 +50,25 @@ class _NearbyGallerySheetState extends State<NearbyGallerySheet> {
         height: 60,
         fit: BoxFit.cover,
       );
+    }
+  }
+
+  Future<void> openGoogleMaps(
+    double lat,
+    double lng,
+    String name,
+  ) async {
+    final Uri mapsUrl = Uri.parse(
+      'https://www.google.com/maps/search/?api=1&query=$lat,$lng',
+    );
+
+    try {
+      await launchUrl(
+        mapsUrl,
+        mode: LaunchMode.externalApplication,
+      );
+    } catch (e) {
+      debugPrint('Maps error: $e');
     }
   }
 
@@ -126,55 +146,72 @@ class _NearbyGallerySheetState extends State<NearbyGallerySheet> {
 
                       return Padding(
                         padding: const EdgeInsets.only(bottom: 14),
-                        child: Container(
-                          padding: const EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(14),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.05),
-                                blurRadius: 8,
-                                offset: const Offset(0, 4),
-                              ),
-                            ],
-                          ),
-                          child: Row(
-                            children: [
-                              /// IMAGE
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(10),
-                                child: buildImage(g["image"]),
-                              ),
-
-                              const SizedBox(width: 12),
-
-                              /// TEXT
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      g["name"],
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: GoogleFonts.inter(
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 14,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 4),
-                                    Text(
-                                      "${distance.toStringAsFixed(1)} km away",
-                                      style: GoogleFonts.inter(
-                                        fontSize: 12,
-                                        color: Colors.grey,
-                                      ),
-                                    ),
-                                  ],
+                        child: GestureDetector(
+                          onTap: () {
+                            openGoogleMaps(
+                              g["lat"],
+                              g["lng"],
+                              g["name"],
+                            );
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(14),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.05),
+                                  blurRadius: 8,
+                                  offset: const Offset(0, 4),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
+                            child: Row(
+                              children: [
+                                /// IMAGE
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(10),
+                                  child: buildImage(g["image"]),
+                                ),
+
+                                const SizedBox(width: 12),
+
+                                /// TEXT
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        g["name"],
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: GoogleFonts.inter(
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 14,
+                                        ),
+                                      ),
+
+                                      const SizedBox(height: 4),
+
+                                      Text(
+                                        "${distance.toStringAsFixed(1)} km away",
+                                        style: GoogleFonts.inter(
+                                          fontSize: 12,
+                                          color: Colors.grey,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+
+                                const Icon(
+                                  Icons.map_outlined,
+                                  size: 18,
+                                  color: Colors.black54,
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       );

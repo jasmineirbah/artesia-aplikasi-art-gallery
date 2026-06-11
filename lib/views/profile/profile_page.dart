@@ -12,6 +12,7 @@ import '../../controllers/auth_controller.dart';
 import '../../widgets/app_logo.dart';
 import '../../widgets/primary_button.dart';
 import 'nearby_gallery_sheet.dart';
+import '../inbox/inbox_page.dart';
 import '../auth/login_page.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -536,6 +537,50 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
             ),
 
+            const SizedBox(height: 10),
+
+            GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const KesanPesanPage(),
+                  ),
+                );
+              },
+              child: Container(
+                padding: const EdgeInsets.symmetric(vertical: 4),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        "Kesan & Pesan",
+                        style: GoogleFonts.cormorantGaramond(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                    ),
+
+                    IconButton(
+                      icon: const Icon(
+                        Icons.arrow_forward_ios,
+                        size: 16,
+                      ),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const KesanPesanPage(),
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ),
+
             const SizedBox(height: 20),
 
             SizedBox(
@@ -545,6 +590,8 @@ class _ProfilePageState extends State<ProfilePage> {
                 onPressed: () => logout(context),
               ),
             ),
+
+            const SizedBox(height: 40),
           ],
         ),
       ),

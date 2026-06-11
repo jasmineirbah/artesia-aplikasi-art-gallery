@@ -2,7 +2,11 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 class ApiService {
+  static List<Map<String, dynamic>>? _cache;
   Future<List<Map<String, dynamic>>> fetchArtworks() async {
+    if (_cache != null) {
+      return _cache!;
+    }
     try {
       // SEARCH PAINTINGS
       final searchUrl = Uri.parse(
@@ -19,8 +23,8 @@ class ApiService {
 
       final List ids = searchData['objectIDs'] ?? [];
 
-      // ambil maksimal 50 
-      final limitedIds = ids.take(50).toList();
+      // ambil maksimal 20
+      final limitedIds = ids.take(20).toList();
 
       List<Map<String, dynamic>> artworks = [];
 
@@ -68,6 +72,7 @@ class ApiService {
         }
       }
 
+      _cache = artworks;
       return artworks;
     } catch (e) {
       throw Exception('Error fetching artworks: $e');

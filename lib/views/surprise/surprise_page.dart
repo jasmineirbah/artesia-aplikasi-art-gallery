@@ -2,7 +2,9 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-
+import '../../widgets/app_logo.dart';
+import '../../widgets/custom_back_button.dart';
+import '../../widgets/primary_button.dart';
 import '../../services/api_service.dart';
 
 class SurprisePage extends StatefulWidget {
@@ -58,6 +60,32 @@ class _SurprisePageState extends State<SurprisePage> {
     return Scaffold(
       backgroundColor: const Color(0xFFFBF9F4),
 
+                    appBar: AppBar(
+                      backgroundColor: Colors.transparent,
+                      elevation: 0,
+                      centerTitle: true,
+                      toolbarHeight: 100,
+
+                      leading: const CustomBackButton(),
+
+                      title: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const AppLogo(showBackButton: false),
+
+                          const SizedBox(height: 6),
+
+                          Text(
+                            'Surprise Me',
+                            style: GoogleFonts.cormorantGaramond(
+                              fontSize: 26,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
       body: isLoading
           ? const Center(
               child: CircularProgressIndicator(),
@@ -71,16 +99,6 @@ class _SurprisePageState extends State<SurprisePage> {
                 child: Column(
                   children: [
                     const SizedBox(height: 30),
-
-                    /// TITLE
-                    Text(
-                      "🎲 Surprise Me",
-                      style: GoogleFonts.cormorantGaramond(
-                        fontSize: 30,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                      ),
-                    ),
 
                     const SizedBox(height: 8),
 
@@ -96,22 +114,37 @@ class _SurprisePageState extends State<SurprisePage> {
                     const SizedBox(height: 30),
 
                     /// IMAGE
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(20),
-                      child: Image.network(
-                        randomArt!['image'],
-                        height: 280,
-                        width: double.infinity,
-                        fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) {
-                          return Container(
-                            height: 280,
-                            color: Colors.grey.shade300,
-                            child: const Center(
-                              child: Icon(Icons.image_not_supported),
-                            ),
-                          );
-                        },
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(20),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.08),
+                            blurRadius: 12,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: Image.network(
+                          randomArt!['image'],
+                          height: 320,
+                          width: double.infinity,
+                          fit: BoxFit.contain,
+                          errorBuilder: (_, __, ___) {
+                            return Container(
+                              height: 320,
+                              color: Colors.grey.shade300,
+                              child: const Center(
+                                child: Icon(Icons.image_not_supported),
+                              ),
+                            );
+                          },
+                        ),
                       ),
                     ),
 
@@ -159,27 +192,9 @@ class _SurprisePageState extends State<SurprisePage> {
                     /// BUTTON
                     SizedBox(
                       width: double.infinity,
-                      height: 55,
-                      child: ElevatedButton.icon(
+                      child: PrimaryButton(
+                        text: "🎲 TRY ANOTHER",
                         onPressed: getAnotherArtwork,
-                        icon: const Icon(Icons.shuffle),
-                        label: Text(
-                          "Try Another",
-                          style: GoogleFonts.inter(
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white,
-                          foregroundColor: Colors.black,
-                          elevation: 0,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16),
-                            side: BorderSide(
-                              color: Colors.grey.shade300,
-                            ),
-                          ),
-                        ),
                       ),
                     ),
 
